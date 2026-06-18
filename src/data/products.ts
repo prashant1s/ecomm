@@ -1,4 +1,4 @@
-import { Product } from '@/types/product';
+import { Product } from '../app/types/product';
 
 export const featuredProducts: Product[] = [
   { id: '1', name: 'Classic Blue Denim', category: 'Men', price: 120, rating: 5, image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&q=80' },
