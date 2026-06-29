@@ -21,7 +21,7 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = ['Men', 'Women', 'Accessories', 'New Arrivals', 'Sale'];
+  const navLinks = ['Men', 'Women', 'New Arrivals', 'Sale'];
 
   return (
     <>

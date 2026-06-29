@@ -6,7 +6,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-6 text-gray-900">Quick Links</h3>
             <ul className="space-y-3 text-gray-600">
-              {['Home', 'About', 'My Account', 'Cart', 'Contact'].map(link => (
+              {['Home', 'About', 'Cart', 'Contact'].map(link => (
                  <li key={link}><a href="#" className="hover:text-blue-600 transition">{link}</a></li>
               ))}
             </ul>
@@ -14,7 +14,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-6 text-gray-900">For Her</h3>
             <ul className="space-y-3 text-gray-600">
-              {['Women Jeans', 'Tops and Shirts', 'Women Jackets', 'Heels and Flats', 'Accessories'].map(link => (
+              {['Women Jeans', 'Tops and Shirts', 'Women Jackets', 'Heels and Flats'].map(link => (
                  <li key={link}><a href="#" className="hover:text-blue-600 transition">{link}</a></li>
               ))}
             </ul>
