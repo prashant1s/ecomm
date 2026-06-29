@@ -74,14 +74,14 @@ export default function Header() {
                   <p className="text-gray-500 text-center mt-10">Your cart is empty.</p>
                 ) : (
                   items.map(item => (
-                    <div key={item.id} className="flex gap-4 border-b pb-4">
+                    <div key={item._id} className="flex gap-4 border-b pb-4">
                       <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-md" />
                       <div className="flex-1">
                         <h3 className="font-semibold">{item.name}</h3>
                         <p className="text-gray-500 text-sm">Qty: {item.quantity}</p>
                         <p className="font-medium text-blue-600">${item.price}</p>
                       </div>
-                      <button onClick={() => removeItem(item.id)} className="text-red-500 text-sm h-fit">Remove</button>
+                      <button onClick={() => removeItem(item._id)} className="text-red-500 text-sm h-fit">Remove</button>
                     </div>
                   ))
                 )}
