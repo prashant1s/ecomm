@@ -75,7 +75,7 @@ export default function Header() {
                 ) : (
                   items.map(item => (
                     <div key={item._id} className="flex gap-4 border-b pb-4">
-                      <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-md" />
+                      <img src={item.imageUrl} alt={item.name} className="w-20 h-20 object-cover rounded-md" />
                       <div className="flex-1">
                         <h3 className="font-semibold">{item.name}</h3>
                         <p className="text-gray-500 text-sm">Qty: {item.quantity}</p>
