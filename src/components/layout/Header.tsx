@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Search, User, Menu, X } from 'lucide-react';
+import Image from 'next/image';
+import { ShoppingCart, Search, Menu, X } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -27,8 +28,11 @@ export default function Header() {
       <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className={`text-2xl font-bold tracking-tighter ${isScrolled ? 'text-black' : 'text-white drop-shadow-md'}`}>
-            STYLEHUB
+          <Link href="/" className="flex items-center gap-2">
+            <Image src="/icon512x512.png" alt="StyleHub Logo" width={32} height={32} className="rounded-sm" />
+            <span className={`text-2xl font-bold tracking-tighter ${isScrolled ? 'text-black' : 'text-white drop-shadow-md'}`}>
+              STYLEHUB
+            </span>
           </Link>
 
           {/* Desktop Nav */}
@@ -43,7 +47,6 @@ export default function Header() {
           {/* Icons */}
           <div className={`flex items-center gap-6 ${isScrolled ? 'text-black' : 'text-white'}`}>
             <Search className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors" />
-            <User className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors" />
             <div className="relative cursor-pointer" onClick={() => setIsCartOpen(true)}>
               <ShoppingCart className="w-5 h-5 hover:text-blue-600 transition-colors" />
               {mounted && totalItems > 0 && (

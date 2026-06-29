@@ -1,12 +1,10 @@
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
+  slug?: { current: string };
   category: string;
   price: number;
   rating: number;
-  image: string;
-}
-
-export interface CartItem extends Product {
-  quantity: number;
+  imageUrl: any;
+  description?: string;
 }

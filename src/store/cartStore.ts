@@ -1,6 +1,10 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { CartItem, Product } from '../app/types/product';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { Product } from "../types/product";
+
+export interface CartItem extends Product {
+  quantity: number;
+}
 
 interface CartState {
   items: CartItem[];
@@ -18,23 +22,28 @@ export const useCartStore = create<CartState>()(
       items: [],
       addItem: (product) => {
         const items = get().items;
-        const existingItem = items.find((item) => item.id === product.id);
-        
+        const existingItem = items.find((item) => item._id === product._id);
+
         if (existingItem) {
           set({
             items: items.map((item) =>
-              item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+              item._id === product._id
+                ? { ...item, quantity: item.quantity + 1 }
+                : item,
             ),
           });
         } else {
           set({ items: [...items, { ...product, quantity: 1 }] });
         }
       },
-      removeItem: (id) => set({ items: get().items.filter((item) => item.id !== id) }),
+      removeItem: (id) =>
+        set({ items: get().items.filter((item) => item._id !== id) }),
       updateQuantity: (id, quantity) =>
         set({
           items: get().items.map((item) =>
-            item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+            item._id === id
+              ? { ...item, quantity: Math.max(1, quantity) }
+              : item,
           ),
         }),
       clearCart: () => set({ items: [] }),
@@ -42,9 +51,12 @@ export const useCartStore = create<CartState>()(
         return get().items.reduce((total, item) => total + item.quantity, 0);
       },
       get subtotal() {
-        return get().items.reduce((total, item) => total + item.price * item.quantity, 0);
+        return get().items.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0,
+        );
       },
     }),
-    { name: 'stylehub-cart' }
-  )
+    { name: "stylehub-cart" },
+  ),
 );

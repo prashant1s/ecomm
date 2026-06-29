@@ -38,7 +38,6 @@ export default function Footer() {
         </div>
         <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
           <p>© 2026 StyleHub. All rights reserved.</p>
-          <p>Built with Next.js & Tailwind CSS</p>
         </div>
       </div>
     </footer>
