@@ -14,7 +14,7 @@ async function getProducts(): Promise<Product[]> {
   const query = `*[_type == "product"] | order(_createdAt desc)[0...5] {
     _id,
     name,
-    slug,
+    "slug": slug.current,
     category,
     price,
     rating,

@@ -1,7 +1,7 @@
 export interface Product {
   _id: string;
   name: string;
-  slug?: { current: string };
+  slug?: string ;
   category: string;
   price: number;
   rating: number;
