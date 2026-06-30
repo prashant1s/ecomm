@@ -21,7 +21,7 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = ['Men', 'Women', 'New Arrivals', 'Sale'];
+  const navLinks = ['Home', 'About Us', 'Collection', 'Contact us'];
 
   return (
     <>
@@ -31,7 +31,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2">
             <Image src="/icon512x512.png" alt="StyleHub Logo" width={32} height={32} className="rounded-sm" />
             <span className={`text-2xl font-bold tracking-tighter ${isScrolled ? 'text-black' : 'text-white drop-shadow-md'}`}>
-              STYLEHUB
+              Jiya JR
             </span>
           </Link>
 
