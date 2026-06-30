@@ -3,196 +3,197 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Search, ChevronDown, Star, Heart, MessageCircle, ShoppingBag, Truck, ShieldCheck, Share2 } from "lucide-react";
+import { Star, Heart, Truck, RefreshCw, Minus, Plus } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { Product } from "@/types/product";
-import { getWhatsAppProductLink } from "@/utils/whatsapp";
 
 interface ProductClientProps {
   product: Product;
   categories: string[];
 }
 
-export default function ProductClient({ product, categories }: ProductClientProps) {
-  const [searchCategory, setSearchCategory] = useState("");
-  const router = useRouter();
+export default function ProductClient({ product }: ProductClientProps) {
   const addItem = useCartStore((state) => state.addItem);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState("M");
 
-  const handleWhatsAppBuy = () => {
-    const targetUrl = getWhatsAppProductLink(product);
-    window.open(targetUrl, '_blank', 'noopener,noreferrer');
-  };
+  // Mocking multiple thumbnails using the single product image for the visual effect
+  const thumbnails = [product.imageUrl, product.imageUrl, product.imageUrl, product.imageUrl];
 
-  // Route back to the main shop if they try to filter from the single product page
-  const handleCategoryClick = () => {
-    router.push('/shop');
+  const handleAddToCart = () => {
+    // Adding multiple quantities to the store (if your store supports it, otherwise just add 1)
+    for (let i = 0; i < quantity; i++) {
+      addItem(product);
+    }
   };
 
   return (
-    <div className="bg-white min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-4 lg:px-8">
+    <div className="bg-white min-h-screen pt-32 pb-16">
+      <div className="container mx-auto px-4 lg:px-12 max-w-7xl">
         
         {/* Breadcrumbs */}
-        <div className="text-sm text-gray-500 mb-8 flex items-center gap-2">
-          <Link href="/" className="hover:text-blue-600 transition">Home</Link>
+        <div className="text-sm text-gray-500 mb-10 flex items-center gap-3">
+          <Link href="/" className="hover:text-black transition">Account</Link>
           <span>/</span>
-          <Link href="/shop" className="hover:text-blue-600 transition">Shop</Link>
+          <Link href="/shop" className="hover:text-black transition">{product.category}</Link>
           <span>/</span>
-          <span className="hover:text-blue-600 transition cursor-pointer" onClick={handleCategoryClick}>{product.category}</span>
-          <span>/</span>
-          <span className="text-gray-900 font-medium truncate max-w-[200px]">{product.name}</span>
+          <span className="text-black font-medium">{product.name}</span>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-10">
+        {/* Main Product Section */}
+        <div className="flex flex-col lg:flex-row gap-12 mb-24">
           
-          {/* --- LEFT SIDEBAR (Filters - Matches ShopClient perfectly) --- */}
-          <aside className="w-full lg:w-72 flex-shrink-0">
-            <div className="border border-gray-200 rounded-md p-4 mb-6 cursor-pointer flex justify-between items-center hover:bg-gray-50 transition">
-              <span className="text-gray-600 font-medium">Sort by : <span className="font-bold text-gray-800">Relevance</span></span>
-              <ChevronDown className="w-5 h-5 text-gray-500" />
+          {/* Left: Image Gallery */}
+          <div className="w-full lg:w-[60%] flex gap-6">
+            {/* Thumbnails (Vertical) */}
+            <div className="hidden md:flex flex-col gap-4 w-32">
+              {thumbnails.map((img, idx) => (
+                <div key={idx} className="bg-gray-100 rounded-md p-2 cursor-pointer border-2 border-transparent hover:border-gray-300 transition h-32 relative">
+                  <Image src={img} alt="Thumbnail" fill className="object-contain p-2 mix-blend-multiply" />
+                </div>
+              ))}
             </div>
 
-            <div className="border border-gray-200 rounded-md">
-              <div className="p-4 border-b border-gray-200">
-                <h2 className="font-bold text-gray-800 text-lg">FILTERS</h2>
-                <p className="text-xs text-gray-500 mt-1">Explore our catalog</p>
-              </div>
-
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-4 cursor-pointer">
-                  <h3 className="font-bold text-gray-800">Category</h3>
-                  <ChevronDown className="w-5 h-5 text-gray-500" />
-                </div>
-                
-                <div className="relative mb-4">
-                  <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    placeholder="Search Categories"
-                    value={searchCategory}
-                    onChange={(e) => setSearchCategory(e.target.value)}
-                    className="w-full border border-gray-300 rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-
-                {/* Dynamic Category Checkboxes */}
-                <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
-                  {categories
-                    .filter(c => c.toLowerCase().includes(searchCategory.toLowerCase()))
-                    .map((cat, idx) => (
-                    <label key={idx} className="flex items-center gap-3 cursor-pointer group">
-                      <input 
-                        type="checkbox" 
-                        onChange={handleCategoryClick}
-                        checked={cat === product.category}
-                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
-                      />
-                      <span className={`text-sm ${cat === product.category ? 'font-bold text-blue-600' : 'text-gray-600 group-hover:text-gray-900'}`}>
-                        {cat}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          {/* --- RIGHT CONTENT (Professional Product Details) --- */}
-          <main className="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-10">
-            
-            {/* Left Col: Image Gallery */}
-            <div className="relative aspect-square xl:aspect-[4/5] bg-gray-50 rounded-xl overflow-hidden border border-gray-100 flex items-center justify-center group">
-              <div className="absolute top-4 right-4 flex flex-col gap-3 z-10">
-                <button className="bg-white p-2.5 rounded-full shadow-sm text-gray-400 hover:text-red-500 hover:shadow-md transition">
-                  <Heart className="w-5 h-5" />
-                </button>
-                <button className="bg-white p-2.5 rounded-full shadow-sm text-gray-400 hover:text-blue-500 hover:shadow-md transition">
-                  <Share2 className="w-5 h-5" />
-                </button>
-              </div>
-              
+            {/* Main Image */}
+            <div className="flex-1 bg-gray-100 rounded-md relative min-h-[400px] md:min-h-[500px] flex items-center justify-center p-8">
               <Image 
                 src={product.imageUrl} 
                 alt={product.name}
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain p-8 mix-blend-multiply group-hover:scale-105 transition-transform duration-700"
+                className="object-contain p-12 mix-blend-multiply"
               />
             </div>
+          </div>
 
-            {/* Right Col: Product Info */}
-            <div className="flex flex-col">
-              <span className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-3">
-                {product.category}
-              </span>
-              <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-4">
-                {product.name}
-              </h1>
-              
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex items-center gap-1 text-yellow-400">
-                  {"★".repeat(Math.round(product.rating || 5))}
-                  {"☆".repeat(5 - Math.round(product.rating || 5))}
-                </div>
-                <span className="text-sm text-gray-500 hover:text-gray-900 cursor-pointer underline underline-offset-4 transition">
-                  Read Reviews
-                </span>
+          {/* Right: Product Details */}
+          <div className="w-full lg:w-[40%] flex flex-col pt-2">
+            <h1 className="text-2xl font-bold text-black tracking-wide mb-3">
+              {product.name}
+            </h1>
+            
+            {/* Rating & Stock */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-1 text-[#FFAD33]">
+                <Star className="w-4 h-4 fill-current" />
+                <Star className="w-4 h-4 fill-current" />
+                <Star className="w-4 h-4 fill-current" />
+                <Star className="w-4 h-4 fill-current" />
+                <Star className="w-4 h-4 text-gray-300" />
               </div>
-
-              {/* Price Block */}
-              <div className="flex items-end gap-3 mb-6 pb-6 border-b border-gray-100">
-                <span className="text-4xl font-black text-gray-900">${product.price.toFixed(2)}</span>
-                <span className="text-lg text-gray-400 line-through mb-1">${(product.price * 1.5).toFixed(2)}</span>
-                <span className="text-sm font-bold text-green-600 mb-2">(33% OFF)</span>
-              </div>
-
-              {/* Description */}
-              <div className="mb-8">
-                <h3 className="font-semibold text-gray-900 mb-2">Product Description</h3>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  {product.description || "Crafted with premium materials for maximum comfort and durability. This piece elevates your everyday style while maintaining exceptional quality and a perfect fit."}
-                </p>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <button 
-                  onClick={() => addItem(product)}
-                  className="flex-1 bg-black text-white font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-800 hover:shadow-lg transition-all active:scale-[0.98]"
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  Add to Cart
-                </button>
-                <button 
-                  onClick={handleWhatsAppBuy}
-                  className="flex-1 bg-[#25D366] text-white font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-[#1ebd5a] hover:shadow-lg transition-all active:scale-[0.98]"
-                >
-                  <MessageCircle className="w-5 h-5 fill-current" />
-                  Buy on WhatsApp
-                </button>
-              </div>
-
-              {/* Trust Badges */}
-              <div className="grid grid-cols-2 gap-4 p-5 bg-gray-50 rounded-xl border border-gray-100">
-                <div className="flex items-center gap-3 text-gray-700">
-                  <div className="bg-white p-2 rounded-md shadow-sm border border-gray-100">
-                    <Truck className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <span className="text-xs font-semibold uppercase tracking-wide">Free Global Delivery</span>
-                </div>
-                <div className="flex items-center gap-3 text-gray-700">
-                  <div className="bg-white p-2 rounded-md shadow-sm border border-gray-100">
-                    <ShieldCheck className="w-5 h-5 text-green-600" />
-                  </div>
-                  <span className="text-xs font-semibold uppercase tracking-wide">1 Year Warranty</span>
-                </div>
-              </div>
-
+              <span className="text-sm text-gray-400 border-r border-gray-400 pr-3">(150 Reviews)</span>
+              <span className="text-sm text-green-500 font-medium pl-1">In Stock</span>
             </div>
-          </main>
+
+            {/* Price */}
+            <div className="text-2xl font-medium text-black tracking-wide mb-6">
+              ${product.price.toFixed(2)}
+            </div>
+
+            {/* Description */}
+            <p className="text-sm text-gray-600 leading-relaxed mb-6 pb-6 border-b border-gray-300">
+              {product.description || "PlayStation 5 Controller Skin High quality vinyl with air channel adhesive for easy bubble free install & mess free removal Pressure sensitive."}
+            </p>
+
+            {/* Colors */}
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-lg text-black mr-2 tracking-wide">Colours:</span>
+              <button className="w-5 h-5 rounded-full bg-blue-300 border-2 border-black ring-2 ring-transparent hover:ring-black transition"></button>
+              <button className="w-5 h-5 rounded-full bg-red-400 border-2 border-transparent hover:border-black transition"></button>
+            </div>
+
+            {/* Sizes */}
+            <div className="flex items-center gap-4 mb-8">
+              <span className="text-lg text-black mr-2 tracking-wide">Size:</span>
+              {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
+                <button 
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`w-9 h-9 rounded border flex items-center justify-center text-sm font-medium transition ${
+                    selectedSize === size ? 'bg-[#DB4444] border-[#DB4444] text-white' : 'border-gray-400 text-black hover:border-[#DB4444] hover:text-[#DB4444]'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+
+            {/* Actions (Quantity + Buy Now) */}
+            <div className="flex items-center gap-4 mb-10">
+              <div className="flex items-center border border-gray-400 rounded overflow-hidden h-11">
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-4 py-2 hover:bg-gray-100 transition border-r border-gray-400"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="w-12 text-center font-medium text-lg">{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="px-4 py-2 bg-[#DB4444] text-white hover:bg-red-600 transition border-l border-[#DB4444]"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+
+              <button 
+                onClick={handleAddToCart}
+                className="flex-1 bg-[#DB4444] text-white h-11 rounded font-medium hover:bg-red-600 transition tracking-wide"
+              >
+                Buy Now
+              </button>
+
+              <button className="w-11 h-11 border border-gray-400 rounded flex items-center justify-center hover:bg-gray-50 transition">
+                <Heart className="w-5 h-5 text-black" />
+              </button>
+            </div>
+
+            {/* Delivery Info Boxes */}
+            <div className="border border-gray-400 rounded flex flex-col">
+              <div className="flex gap-4 p-4 items-center border-b border-gray-400">
+                <Truck className="w-8 h-8 text-black stroke-1" />
+                <div className="flex flex-col">
+                  <span className="font-medium text-black">Free Delivery</span>
+                  <span className="text-xs text-black underline cursor-pointer mt-1 font-medium">Enter your postal code for Delivery Availability</span>
+                </div>
+              </div>
+              <div className="flex gap-4 p-4 items-center">
+                <RefreshCw className="w-8 h-8 text-black stroke-1" />
+                <div className="flex flex-col">
+                  <span className="font-medium text-black">Return Delivery</span>
+                  <span className="text-xs text-black mt-1 font-medium">Free 30 Days Delivery Returns. <span className="underline cursor-pointer">Details</span></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
+
+        {/* Related Item Section */}
+        <div className="mt-20">
+          <div className="flex items-center gap-4 mb-10">
+            <div className="w-5 h-10 bg-[#DB4444] rounded-sm"></div>
+            <h2 className="text-[#DB4444] font-bold text-lg">Related Item</h2>
+          </div>
+          
+          {/* Grid placeholder to match your screenshot layout visually */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+             <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
+                <span className="text-gray-400 text-sm">Related Item 1</span>
+             </div>
+             <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
+                <span className="text-gray-400 text-sm">Related Item 2</span>
+             </div>
+             <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
+                <span className="text-gray-400 text-sm">Related Item 3</span>
+             </div>
+             <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
+                <span className="text-gray-400 text-sm">Related Item 4</span>
+             </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );
