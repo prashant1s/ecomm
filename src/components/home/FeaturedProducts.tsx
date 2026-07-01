@@ -1,7 +1,8 @@
 "use client";
+
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link'; // <-- 1. Import Link
+import Link from 'next/link';
 import { Product } from '@/types/product';
 import { useCartStore } from '@/store/cartStore';
 import { ShoppingBag, MessageCircle } from 'lucide-react';
@@ -11,17 +12,17 @@ import { urlForImage } from '@/sanity/lib/image';
 export default function FeaturedProducts({ products }: { products: Product[] }) {
   const addItem = useCartStore((state) => state.addItem);
 
+  const handleAddToCart = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault(); // Prevent link navigation
+    e.stopPropagation();
+    addItem(product);
+  };
+
   const handleWhatsAppBuy = (e: React.MouseEvent, product: Product) => {
     e.preventDefault(); // Prevent link navigation
     e.stopPropagation();
     const targetUrl = getWhatsAppProductLink(product);
     window.open(targetUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleAddToCart = (e: React.MouseEvent, product: Product) => {
-    e.preventDefault(); // Prevent link navigation
-    e.stopPropagation();
-    addItem(product);
   };
 
   return (
@@ -32,7 +33,7 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
           <div className="w-16 h-0.5 bg-blue-600 mx-auto"></div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-16">
           {products.map((product, idx) => (
             <motion.div
               key={product._id}
@@ -40,52 +41,70 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="group bg-white rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex flex-col justify-between relative"
+              // h-full ensures all cards stretch to equal heights
+              className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow duration-300 flex flex-col h-full relative"
             >
-              {/* 2. Wrap the visual content in a Link */}
-              <Link href={`/shop/product/${product.slug || product._id}`} className="flex-1">
-                <div className="relative aspect-square overflow-hidden bg-gray-100">
+              <Link href={`/shop/product/${product.slug || product._id}`} className="flex-col flex flex-1">
+                
+                {/* Image Container */}
+                <div className="relative aspect-square w-full mb-3 flex items-center justify-center">
                   <Image 
                     src={typeof product.imageUrl === 'string' ? product.imageUrl : urlForImage(product.imageUrl).url()} 
                     alt={product.name} 
                     fill 
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1280px) 33vw, 20vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-contain hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-
-                  {/* Keep Cart Add button inside, but use the new handler */}
-                  <button
-                    onClick={(e) => handleAddToCart(e, product)}
-                    className="absolute top-4 right-4 bg-white p-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-blue-600 hover:text-white z-10"
-                    title="Add to Cart"
-                  >
-                    <ShoppingBag className="w-4 h-4" />
-                  </button>
                 </div>
 
-                <div className="p-4 pb-2">
-                  <p className="text-xs text-gray-500 mb-1">{product.category}</p>
-                  <h3 className="font-semibold text-gray-900 mb-2 truncate">{product.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-gray-900">${product.price.toFixed(2)}</span>
-                    <div className="flex text-yellow-400 text-sm">
-                      {"★".repeat(product.rating || 5)}
+                {/* Text Content */}
+                <div className="flex flex-col flex-1">
+                  <span className="text-[13px] text-gray-500 mb-0">{product.category}</span>
+                  <h3 className="font-semibold text-gray-900 text-base mb-0 line-clamp-2 min-h-[30px]">
+                    {product.name}
+                  </h3>
+                  
+                  {/* Bottom Area (Pushed to bottom using mt-auto) */}
+                  <div className="mt-0 flex flex-col gap-2">
+                    
+                    {/* Row 1: Rating, Price & Cart Button */}
+                    <div className="flex items-end justify-between">
+                      <div className="flex flex-col gap-1">
+                        {/* Rating Stars */}
+                        <div className="flex text-[#F5A623] text-sm">
+                          {"★".repeat(Math.round(product.rating || 5))}
+                          <span className="text-gray-300">
+                            {"★".repeat(5 - Math.round(product.rating || 5))}
+                          </span>
+                        </div>
+                        {/* Price */}
+                        <span className="font-bold text-gray-900 text-[16px]">
+                          ₹{product.price.toFixed(2)}
+                        </span>
+                      </div>
+
+                      {/* Dark Green Cart Button */}
+                      <button
+                        onClick={(e) => handleAddToCart(e, product)}
+                        className="w-10 h-10 rounded-full bg-[#1f3d2f] text-white flex items-center justify-center hover:bg-[#152920] transition-colors shadow-sm z-10 relative"
+                        title="Add to Cart"
+                      >
+                        <ShoppingBag className="w-5 h-5" strokeWidth={2} />
+                      </button>
                     </div>
+
+                    {/* Row 2: Full Width WhatsApp Button */}
+                    <button
+                      onClick={(e) => handleWhatsAppBuy(e, product)}
+                      className="w-full bg-[#25D366] text-white text-[13px] font-bold py-2.5 rounded-md flex items-center justify-center gap-2 hover:bg-[#1ebd5a] transition duration-200 shadow-sm z-10 relative tracking-wide uppercase"
+                    >
+                      <MessageCircle className="w-[18px] h-[18px] fill-current" strokeWidth={1} />
+                      Buy on WhatsApp
+                    </button>
+                    
                   </div>
                 </div>
               </Link>
-
-              {/* Instant WhatsApp Order Trigger */}
-              <div className="p-4 pt-2">
-                <button
-                  onClick={(e) => handleWhatsAppBuy(e, product)}
-                  className="w-full bg-emerald-600 text-white text-xs font-bold py-2.5 px-4 rounded flex items-center justify-center gap-2 hover:bg-emerald-700 transition duration-200 shadow-sm z-10 relative"
-                >
-                  <MessageCircle className="w-4 h-4 fill-current" />
-                  BUY ON WHATSAPP
-                </button>
-              </div>
             </motion.div>
           ))}
         </div>

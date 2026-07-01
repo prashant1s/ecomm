@@ -121,7 +121,7 @@ export default function Header() {
                           Qty: {item.quantity}
                         </p>
                         <p className="font-medium text-blue-600">
-                          ${item.price}
+                          ₹{item.price}
                         </p>
                       </div>
                       <button

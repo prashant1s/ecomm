@@ -88,9 +88,8 @@ export default function ProductClient({ product }: ProductClientProps) {
 
             {/* Price */}
             <div className="text-2xl font-medium text-black tracking-wide mb-6">
-              ${product.price.toFixed(2)}
+              ₹{product.price.toFixed(2)}
             </div>
-
             {/* Description */}
             <p className="text-sm text-gray-600 leading-relaxed mb-6 pb-6 border-b border-gray-300">
               {product.description || "PlayStation 5 Controller Skin High quality vinyl with air channel adhesive for easy bubble free install & mess free removal Pressure sensitive."}
