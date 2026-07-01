@@ -1,23 +1,29 @@
-import { Product } from '../types/product';
+import { Product } from "../types/product";
 
-// Replace with your real business WhatsApp phone number (Include Country Code, NO symbols like + or -)
-const WHATSAPP_PHONE_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "8168291041";
+const WHATSAPP_PHONE_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918168291041";
 
-export function getWhatsAppProductLink(product: Product): string {
-  const lineBreak = "%0A";
-  
-  // Format price beautifully
-  const formattedPrice = `$${product.price.toFixed(2)}`;
-  
-  // Construct a professional receipt message layout
-  const message = 
-    `👋 Hello StyleHub! I would like to order this item:${lineBreak}${lineBreak}` +
-    `🛒 *PRODUCT DETAILS*${lineBreak}` +
-    `--------------------------------${lineBreak}` +
-    `📦 *Name:* ${product.name}${lineBreak}` +
-    `🏷️ *Category:* ${product.category}${lineBreak}` +
-    `💵 *Price:* ${formattedPrice}${lineBreak}` +
-    `⭐️ *Rating:* ${'★'.repeat(product.rating)}${lineBreak}${lineBreak}` +
-    `🔗 *Product Image:* ${product.imageUrl}${lineBreak}${lineBreak}`;
-  return `https://wa.me/${WHATSAPP_PHONE_NUMBER}?text=${message}`;
+export function getWhatsAppProductLink(product: Product) {
+  const price = `₹${product.price.toFixed(2)}`;
+  const rating = "★".repeat(Math.round(product.rating ?? 5));
+
+  const message = `
+🛒 *NEW ORDER REQUEST*
+
+Hello *Jiya JR*,
+I would like to order the following product.
+──────────────────
+*📦 PRODUCT DETAILS*
+
+• Name: ${product.name}
+• Category: ${product.category}
+• Price: ${price}
+• Rating: ${rating}
+
+📷 *Product Image*
+${product.imageUrl}
+`;
+  return `https://wa.me/${WHATSAPP_PHONE_NUMBER}?text=${encodeURIComponent(
+    message.trim()
+  )}`;
 }
