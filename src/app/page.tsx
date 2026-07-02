@@ -1,4 +1,3 @@
-
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/home/Hero';
@@ -9,6 +8,9 @@ import PromoBanner from '@/components/home/PromoBanner';
 import Features from '@/components/home/Features';
 import { client } from '@/sanity/lib/client';
 import { Product } from '@/types/product';
+import WhyChooseBanner from "@/components/home/WhyChooseBanner"; 
+import PartnerInstitutions from "@/components/home/PartnerInstitutions";
+
 
 async function getProducts(): Promise<Product[]> {
   const query = `*[_type == "product"] | order(_createdAt desc)[0...5] {
@@ -31,11 +33,13 @@ export default async function Home() {
     <main className="min-h-screen bg-white">
       <Header />
       <Hero />
-      <Brands />
-      <Categories />
+      <PartnerInstitutions />
       <FeaturedProducts products={products} />
+      <Categories />
+      <Brands />
       <PromoBanner />
       <Features />
+      <WhyChooseBanner />
       <Footer />
     </main>
   );

@@ -6,7 +6,7 @@ export default function PromoBanner() {
     <section className="relative w-full h-[60vh] min-h-[600px] flex items-center mt-16">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-fixed"
+        className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url('/banner 2.png')" }}
       />
       {/* Brand Blue Overlay */}

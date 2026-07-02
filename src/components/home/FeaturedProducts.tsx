@@ -29,7 +29,7 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Featured Products</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">FEATURED PRODUCTS</h2>
           <div className="w-16 h-0.5 bg-blue-600 mx-auto"></div>
         </div>
 
@@ -101,7 +101,6 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
                       <MessageCircle className="w-[18px] h-[18px] fill-current" strokeWidth={1} />
                       Buy on WhatsApp
                     </button>
-                    
                   </div>
                 </div>
               </Link>
