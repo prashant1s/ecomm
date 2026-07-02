@@ -1,7 +1,7 @@
 import { Product } from "../types/product";
 
 const WHATSAPP_PHONE_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918168291041";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919971509003";
 
 export function getWhatsAppProductLink(product: Product) {
   const price = `₹${product.price.toFixed(2)}`;
