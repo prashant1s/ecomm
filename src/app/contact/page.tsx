@@ -70,8 +70,8 @@ export default function ContactUs() {
                 </p>
 
                 <div>
-                  <p>Reach us at: +91-8168291041</p>
-                  <p>Whats App us: +91-8168291041</p>
+                  <p>Reach us at: +91-9971509003</p>
+                  <p>Whats App us: +91-9971509003</p>
                 </div>
 
                 <p>
@@ -79,11 +79,11 @@ export default function ContactUs() {
                 </p>
 
                 <p>
-                  If you want to visit our office, then you can visit us on all working days on <span className="font-bold">Monday - Saturday between 10:00 - 18:00 Hrs</span> in our Prayagraj Office.
+                  If you want to visit our store, then you can visit us on all working days on <span className="font-bold">Monday - Saturday between 10:00 - 21:00 Hrs</span> in Rama Vihar, store.
                 </p>
 
                 <p className="leading-relaxed">
-                  For any escalations regarding any issues, kindly mail us at <a href="mailto:support@jiyajr.com" className="text-[#DB4444] font-medium hover:underline">support@jiyajr.com</a> or whatsapp at <span className="text-[#DB4444] font-medium">+91-8168291041</span>. The concerned team / managers will reach out to you within 24 Business hrs and will solve your issues.
+                  For any escalations regarding any issues, kindly mail us at <a href="mailto:info@jiyajr.com" className="text-[#DB4444] font-medium hover:underline">info@jiyajr.com</a> or whatsapp at <span className="text-[#DB4444] font-medium">+91-9971509003</span>. The concerned team / managers will reach out to you within 24 Business hrs and will solve your issues.
                 </p>
               </div>
 
@@ -200,13 +200,12 @@ export default function ContactUs() {
             <div className="lg:col-span-4 mt-8 lg:mt-0">
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <div className="bg-gray-100 p-4 border-b border-gray-200">
-                  <h3 className="font-bold text-gray-900 text-lg">Prayagraj (Head Office):</h3>
+                  <h3 className="font-bold text-gray-900 text-lg">JIYA JR Industries:</h3>
                 </div>
                 <div className="p-5 text-sm text-gray-700 leading-relaxed space-y-1 bg-gray-50/50">
-                  <p className="font-bold text-black mb-2">Jiya JR,</p>
-                  <p>Civil Lines,</p>
-                  <p>Near High Court,</p>
-                  <p>Prayagraj, Uttar Pradesh - 211001</p>
+                  <p className="font-bold text-black mb-2">Rama Vihar (store)</p>
+                  <p>2nd Floor, Property No-22A, Block C-1,</p>
+                  <p>Rama Vihar, Delhi-110081</p>
                   <p>India</p>
                 </div>
               </div>

@@ -21,13 +21,13 @@ export default function Features() {
       id: 3,
       icon: <Wrench className="w-6 h-6 text-[#fbbc04]" />,
       title: "We craft it",
-      description: "Mockup approved → hand-crafted in our Prayagraj workshop → final QC.",
+      description: "Mockup approved → hand-crafted in our Rama Vihar workshop → final QC.",
     },
     {
       id: 4,
       icon: <Truck className="w-6 h-6 text-[#fbbc04]" />,
       title: "Delivered",
-      description: "Safe-packed, tracked. 2 days in Prayagraj · 5 days in UP · 2 weeks pan-India.",
+      description: "Safe-packed, tracked. 2 days in Rama Vihar · 5 days in UP · 2 weeks pan-India.",
     },
   ];
 

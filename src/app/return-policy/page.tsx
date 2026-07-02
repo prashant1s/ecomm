@@ -66,7 +66,7 @@ export default function ReturnPolicy() {
                 </div>
                 <div className="bg-white/10 px-6 py-4 rounded-xl border border-white/5 flex-1">
                   <span className="block text-xs text-gray-400 uppercase tracking-wider mb-1">Call / WhatsApp</span>
-                  <strong className="text-lg">+91 8168291041</strong>
+                  <strong className="text-lg">+91 9971509003</strong>
                 </div>
               </div>
             </section>
