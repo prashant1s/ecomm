@@ -1,11 +1,214 @@
+// "use client";
+
+// import { useState } from "react";
+// import Image from "next/image";
+// import Link from "next/link";
+// import { Star, Heart, Truck, RefreshCw, Minus, Plus } from "lucide-react";
+// import { useCartStore } from "@/store/cartStore";
+// import { Product } from "@/types/product";
+
+// interface ProductClientProps {
+//   product: Product;
+//   categories: string[];
+// }
+
+// export default function ProductClient({ product }: ProductClientProps) {
+//   const addItem = useCartStore((state) => state.addItem);
+//   const [quantity, setQuantity] = useState(1);
+//   const [selectedSize, setSelectedSize] = useState("M");
+
+//   // Mocking multiple thumbnails using the single product image for the visual effect
+//   const thumbnails = [product.imageUrl, product.imageUrl, product.imageUrl, product.imageUrl];
+
+//   const handleAddToCart = () => {
+//     // Adding multiple quantities to the store (if your store supports it, otherwise just add 1)
+//     for (let i = 0; i < quantity; i++) {
+//       addItem(product);
+//     }
+//   };
+
+//   return (
+//     <div className="bg-white min-h-screen pt-32 pb-16">
+//       <div className="container mx-auto px-4 lg:px-12 max-w-7xl">
+        
+//         {/* Breadcrumbs */}
+//         <div className="text-sm text-gray-500 mb-10 flex items-center gap-3">
+//           <Link href="/" className="hover:text-black transition">Account</Link>
+//           <span>/</span>
+//           <Link href="/shop" className="hover:text-black transition">{product.category}</Link>
+//           <span>/</span>
+//           <span className="text-black font-medium">{product.name}</span>
+//         </div>
+
+//         {/* Main Product Section */}
+//         <div className="flex flex-col lg:flex-row gap-12 mb-24">
+          
+//           {/* Left: Image Gallery */}
+//           <div className="w-full lg:w-[60%] flex gap-6">
+//             {/* Thumbnails (Vertical) */}
+//             <div className="hidden md:flex flex-col gap-4 w-32">
+//               {thumbnails.map((img, idx) => (
+//                 <div key={idx} className="bg-gray-100 rounded-md p-2 cursor-pointer border-2 border-transparent hover:border-gray-300 transition h-32 relative">
+//                   <Image src={img} alt="Thumbnail" fill className="object-contain p-2 mix-blend-multiply" />
+//                 </div>
+//               ))}
+//             </div>
+
+//             {/* Main Image */}
+//             <div className="flex-1 bg-gray-100 rounded-md relative min-h-[400px] md:min-h-[500px] flex items-center justify-center p-8">
+//               <Image 
+//                 src={product.imageUrl} 
+//                 alt={product.name}
+//                 fill
+//                 priority
+//                 sizes="(max-width: 768px) 100vw, 50vw"
+//                 className="object-contain p-12 mix-blend-multiply"
+//               />
+//             </div>
+//           </div>
+
+//           {/* Right: Product Details */}
+//           <div className="w-full lg:w-[40%] flex flex-col pt-2">
+//             <h1 className="text-2xl font-bold text-black tracking-wide mb-3">
+//               {product.name}
+//             </h1>
+            
+//             {/* Rating & Stock */}
+//             <div className="flex items-center gap-3 mb-4">
+//               <div className="flex items-center gap-1 text-[#FFAD33]">
+//                 <Star className="w-4 h-4 fill-current" />
+//                 <Star className="w-4 h-4 fill-current" />
+//                 <Star className="w-4 h-4 fill-current" />
+//                 <Star className="w-4 h-4 fill-current" />
+//                 <Star className="w-4 h-4 text-gray-300" />
+//               </div>
+//               <span className="text-sm text-gray-400 border-r border-gray-400 pr-3">(150 Reviews)</span>
+//               <span className="text-sm text-green-500 font-medium pl-1">In Stock</span>
+//             </div>
+
+//             {/* Price */}
+//             <div className="text-2xl font-medium text-black tracking-wide mb-6">
+//               ₹{product.price.toFixed(2)}
+//             </div>
+//             {/* Description */}
+//             <p className="text-sm text-gray-600 leading-relaxed mb-6 pb-6 border-b border-gray-300">
+//               {product.description || "PlayStation 5 Controller Skin High quality vinyl with air channel adhesive for easy bubble free install & mess free removal Pressure sensitive."}
+//             </p>
+
+//             {/* Colors */}
+//             <div className="flex items-center gap-4 mb-6">
+//               <span className="text-lg text-black mr-2 tracking-wide">Colours:</span>
+//               <button className="w-5 h-5 rounded-full bg-blue-300 border-2 border-black ring-2 ring-transparent hover:ring-black transition"></button>
+//               <button className="w-5 h-5 rounded-full bg-red-400 border-2 border-transparent hover:border-black transition"></button>
+//             </div>
+
+//             {/* Sizes */}
+//             <div className="flex items-center gap-4 mb-8">
+//               <span className="text-lg text-black mr-2 tracking-wide">Size:</span>
+//               {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
+//                 <button 
+//                   key={size}
+//                   onClick={() => setSelectedSize(size)}
+//                   className={`w-9 h-9 rounded border flex items-center justify-center text-sm font-medium transition ${
+//                     selectedSize === size ? 'bg-[#DB4444] border-[#DB4444] text-white' : 'border-gray-400 text-black hover:border-[#DB4444] hover:text-[#DB4444]'
+//                   }`}
+//                 >
+//                   {size}
+//                 </button>
+//               ))}
+//             </div>
+
+//             {/* Actions (Quantity + Buy Now) */}
+//             <div className="flex items-center gap-4 mb-10">
+//               <div className="flex items-center border border-gray-400 rounded overflow-hidden h-11">
+//                 <button 
+//                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
+//                   className="px-4 py-2 hover:bg-gray-100 transition border-r border-gray-400"
+//                 >
+//                   <Minus className="w-4 h-4" />
+//                 </button>
+//                 <span className="w-12 text-center font-medium text-lg">{quantity}</span>
+//                 <button 
+//                   onClick={() => setQuantity(quantity + 1)}
+//                   className="px-4 py-2 bg-[#DB4444] text-white hover:bg-red-600 transition border-l border-[#DB4444]"
+//                 >
+//                   <Plus className="w-4 h-4" />
+//                 </button>
+//               </div>
+
+//               <button 
+//                 onClick={handleAddToCart}
+//                 className="flex-1 bg-[#DB4444] text-white h-11 rounded font-medium hover:bg-red-600 transition tracking-wide"
+//               >
+//                 Buy Now
+//               </button>
+
+//               <button className="w-11 h-11 border border-gray-400 rounded flex items-center justify-center hover:bg-gray-50 transition">
+//                 <Heart className="w-5 h-5 text-black" />
+//               </button>
+//             </div>
+
+//             {/* Delivery Info Boxes */}
+//             <div className="border border-gray-400 rounded flex flex-col">
+//               <div className="flex gap-4 p-4 items-center border-b border-gray-400">
+//                 <Truck className="w-8 h-8 text-black stroke-1" />
+//                 <div className="flex flex-col">
+//                   <span className="font-medium text-black">Free Delivery</span>
+//                   <span className="text-xs text-black underline cursor-pointer mt-1 font-medium">Enter your postal code for Delivery Availability</span>
+//                 </div>
+//               </div>
+//               <div className="flex gap-4 p-4 items-center">
+//                 <RefreshCw className="w-8 h-8 text-black stroke-1" />
+//                 <div className="flex flex-col">
+//                   <span className="font-medium text-black">Return Delivery</span>
+//                   <span className="text-xs text-black mt-1 font-medium">Free 30 Days Delivery Returns. <span className="underline cursor-pointer">Details</span></span>
+//                 </div>
+//               </div>
+//             </div>
+
+//           </div>
+//         </div>
+
+//         {/* Related Item Section */}
+//         <div className="mt-20">
+//           <div className="flex items-center gap-4 mb-10">
+//             <div className="w-5 h-10 bg-[#DB4444] rounded-sm"></div>
+//             <h2 className="text-[#DB4444] font-bold text-lg">Related Item</h2>
+//           </div>
+          
+//           {/* Grid placeholder to match your screenshot layout visually */}
+//           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+//              <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
+//                 <span className="text-gray-400 text-sm">Related Item 1</span>
+//              </div>
+//              <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
+//                 <span className="text-gray-400 text-sm">Related Item 2</span>
+//              </div>
+//              <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
+//                 <span className="text-gray-400 text-sm">Related Item 3</span>
+//              </div>
+//              <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
+//                 <span className="text-gray-400 text-sm">Related Item 4</span>
+//              </div>
+//           </div>
+//         </div>
+
+//       </div>
+//     </div>
+//   );
+// }
+
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Heart, Truck, RefreshCw, Minus, Plus } from "lucide-react";
+import { Star, Heart, Truck, RefreshCw, Minus, Plus, ChevronDown, MessageCircle, ShoppingBag, ShieldCheck } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/store/cartStore";
 import { Product } from "@/types/product";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 interface ProductClientProps {
   product: Product;
@@ -16,184 +219,221 @@ export default function ProductClient({ product }: ProductClientProps) {
   const addItem = useCartStore((state) => state.addItem);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
+  const [activeTab, setActiveTab] = useState("details");
 
-  // Mocking multiple thumbnails using the single product image for the visual effect
   const thumbnails = [product.imageUrl, product.imageUrl, product.imageUrl, product.imageUrl];
+  const [mainImage, setMainImage] = useState(product.imageUrl);
 
   const handleAddToCart = () => {
-    // Adding multiple quantities to the store (if your store supports it, otherwise just add 1)
     for (let i = 0; i < quantity; i++) {
       addItem(product);
     }
   };
 
-  return (
-    <div className="bg-white min-h-screen pt-32 pb-16">
-      <div className="container mx-auto px-4 lg:px-12 max-w-7xl">
-        
-        {/* Breadcrumbs */}
-        <div className="text-sm text-gray-500 mb-10 flex items-center gap-3">
-          <Link href="/" className="hover:text-black transition">Account</Link>
-          <span>/</span>
-          <Link href="/shop" className="hover:text-black transition">{product.category}</Link>
-          <span>/</span>
-          <span className="text-black font-medium">{product.name}</span>
-        </div>
+  const WHATSAPP_NUMBER = "918168291041";
+  const handleWhatsAppBuy = () => {
+    const message = `Hi, I want to buy ${product.name} (Size: ${selectedSize}, Qty: ${quantity}). Is it available?`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
+  };
 
-        {/* Main Product Section */}
-        <div className="flex flex-col lg:flex-row gap-12 mb-24">
-          
-          {/* Left: Image Gallery */}
-          <div className="w-full lg:w-[60%] flex gap-6">
-            {/* Thumbnails (Vertical) */}
-            <div className="hidden md:flex flex-col gap-4 w-32">
-              {thumbnails.map((img, idx) => (
-                <div key={idx} className="bg-gray-100 rounded-md p-2 cursor-pointer border-2 border-transparent hover:border-gray-300 transition h-32 relative">
-                  <Image src={img} alt="Thumbnail" fill className="object-contain p-2 mix-blend-multiply" />
-                </div>
-              ))}
+  const Accordion = ({ title, id, children }: { title: string, id: string, children: React.ReactNode }) => (
+    <div className="border-b border-gray-200 py-4">
+      <button 
+        onClick={() => setActiveTab(activeTab === id ? "" : id)}
+        className="flex justify-between items-center w-full text-left font-bold text-gray-900 uppercase tracking-wider text-sm"
+      >
+        {title}
+        <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${activeTab === id ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {activeTab === id && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }} 
+            animate={{ height: "auto", opacity: 1 }} 
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="pt-4 text-sm text-gray-600 leading-relaxed">
+              {children}
             </div>
-
-            {/* Main Image */}
-            <div className="flex-1 bg-gray-100 rounded-md relative min-h-[400px] md:min-h-[500px] flex items-center justify-center p-8">
-              <Image 
-                src={product.imageUrl} 
-                alt={product.name}
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain p-12 mix-blend-multiply"
-              />
-            </div>
-          </div>
-
-          {/* Right: Product Details */}
-          <div className="w-full lg:w-[40%] flex flex-col pt-2">
-            <h1 className="text-2xl font-bold text-black tracking-wide mb-3">
-              {product.name}
-            </h1>
-            
-            {/* Rating & Stock */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex items-center gap-1 text-[#FFAD33]">
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 text-gray-300" />
-              </div>
-              <span className="text-sm text-gray-400 border-r border-gray-400 pr-3">(150 Reviews)</span>
-              <span className="text-sm text-green-500 font-medium pl-1">In Stock</span>
-            </div>
-
-            {/* Price */}
-            <div className="text-2xl font-medium text-black tracking-wide mb-6">
-              ₹{product.price.toFixed(2)}
-            </div>
-            {/* Description */}
-            <p className="text-sm text-gray-600 leading-relaxed mb-6 pb-6 border-b border-gray-300">
-              {product.description || "PlayStation 5 Controller Skin High quality vinyl with air channel adhesive for easy bubble free install & mess free removal Pressure sensitive."}
-            </p>
-
-            {/* Colors */}
-            <div className="flex items-center gap-4 mb-6">
-              <span className="text-lg text-black mr-2 tracking-wide">Colours:</span>
-              <button className="w-5 h-5 rounded-full bg-blue-300 border-2 border-black ring-2 ring-transparent hover:ring-black transition"></button>
-              <button className="w-5 h-5 rounded-full bg-red-400 border-2 border-transparent hover:border-black transition"></button>
-            </div>
-
-            {/* Sizes */}
-            <div className="flex items-center gap-4 mb-8">
-              <span className="text-lg text-black mr-2 tracking-wide">Size:</span>
-              {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
-                <button 
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={`w-9 h-9 rounded border flex items-center justify-center text-sm font-medium transition ${
-                    selectedSize === size ? 'bg-[#DB4444] border-[#DB4444] text-white' : 'border-gray-400 text-black hover:border-[#DB4444] hover:text-[#DB4444]'
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-
-            {/* Actions (Quantity + Buy Now) */}
-            <div className="flex items-center gap-4 mb-10">
-              <div className="flex items-center border border-gray-400 rounded overflow-hidden h-11">
-                <button 
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-2 hover:bg-gray-100 transition border-r border-gray-400"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="w-12 text-center font-medium text-lg">{quantity}</span>
-                <button 
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-4 py-2 bg-[#DB4444] text-white hover:bg-red-600 transition border-l border-[#DB4444]"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
-
-              <button 
-                onClick={handleAddToCart}
-                className="flex-1 bg-[#DB4444] text-white h-11 rounded font-medium hover:bg-red-600 transition tracking-wide"
-              >
-                Buy Now
-              </button>
-
-              <button className="w-11 h-11 border border-gray-400 rounded flex items-center justify-center hover:bg-gray-50 transition">
-                <Heart className="w-5 h-5 text-black" />
-              </button>
-            </div>
-
-            {/* Delivery Info Boxes */}
-            <div className="border border-gray-400 rounded flex flex-col">
-              <div className="flex gap-4 p-4 items-center border-b border-gray-400">
-                <Truck className="w-8 h-8 text-black stroke-1" />
-                <div className="flex flex-col">
-                  <span className="font-medium text-black">Free Delivery</span>
-                  <span className="text-xs text-black underline cursor-pointer mt-1 font-medium">Enter your postal code for Delivery Availability</span>
-                </div>
-              </div>
-              <div className="flex gap-4 p-4 items-center">
-                <RefreshCw className="w-8 h-8 text-black stroke-1" />
-                <div className="flex flex-col">
-                  <span className="font-medium text-black">Return Delivery</span>
-                  <span className="text-xs text-black mt-1 font-medium">Free 30 Days Delivery Returns. <span className="underline cursor-pointer">Details</span></span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Related Item Section */}
-        <div className="mt-20">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="w-5 h-10 bg-[#DB4444] rounded-sm"></div>
-            <h2 className="text-[#DB4444] font-bold text-lg">Related Item</h2>
-          </div>
-          
-          {/* Grid placeholder to match your screenshot layout visually */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-             <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
-                <span className="text-gray-400 text-sm">Related Item 1</span>
-             </div>
-             <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
-                <span className="text-gray-400 text-sm">Related Item 2</span>
-             </div>
-             <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
-                <span className="text-gray-400 text-sm">Related Item 3</span>
-             </div>
-             <div className="h-72 bg-gray-100 rounded flex items-center justify-center border border-gray-200">
-                <span className="text-gray-400 text-sm">Related Item 4</span>
-             </div>
-          </div>
-        </div>
-
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+
+  return (
+    <>
+      <Header />
+      <div className="bg-white min-h-screen pt-32 pb-20 font-sans">
+        <div className="container mx-auto px-4 lg:px-12 max-w-[1300px]">
+          
+          {/* Breadcrumbs */}
+          <div className="text-xs text-gray-400 mb-8 flex items-center gap-2 uppercase tracking-widest font-medium">
+            <Link href="/" className="hover:text-[#D4AF37] transition">Home</Link>
+            <span>/</span>
+            <Link href="/shop" className="hover:text-[#D4AF37] transition">Shop</Link>
+            <span>/</span>
+            <Link href={`/shop?category=${product.category}`} className="hover:text-[#D4AF37] transition">{product.category}</Link>
+            <span>/</span>
+            <span className="text-gray-900 truncate max-w-[200px]">{product.name}</span>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-12 xl:gap-16 mb-24 justify-center">
+            
+            {/* Left: Image Gallery (Reduced Size & No Hover Zoom) */}
+            <div className="w-full lg:w-[45%] max-w-lg mx-auto flex flex-col-reverse md:flex-row gap-4 md:gap-6 h-fit sticky top-32">
+              
+              {/* Vertical Thumbnails */}
+              <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:w-20 custom-scrollbar pb-2 md:pb-0">
+                {thumbnails.map((img, idx) => (
+                  <button 
+                    key={idx} 
+                    onClick={() => setMainImage(img)}
+                    className={`relative w-16 h-20 md:w-full md:h-24 flex-shrink-0 bg-[#f8f8f8] rounded-lg overflow-hidden border-2 transition-all ${
+                      mainImage === img ? 'border-[#D4AF37] opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <Image src={img} alt="Thumbnail" fill className="object-contain p-2 mix-blend-multiply" />
+                  </button>
+                ))}
+              </div>
+
+              {/* Main Image (No Zoom) */}
+              <div className="flex-1 bg-[#f8f8f8] rounded-2xl relative aspect-[4/5] max-h-[600px] overflow-hidden group border border-gray-100">
+                <Image 
+                  src={mainImage} 
+                  alt={product.name}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain p-10 mix-blend-multiply transition-opacity duration-300"
+                />
+                <button className="absolute top-4 right-4 bg-white p-3 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors z-10">
+                  <Heart className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Right: Product Details */}
+            <div className="w-full lg:w-[50%] flex flex-col">
+              <div className="border-b border-gray-100 pb-6 mb-6">
+                <h2 className="text-[#D4AF37] text-xs font-bold tracking-[0.2em] uppercase mb-2">
+                  {product.category}
+                </h2>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-wide mb-4 leading-tight">
+                  {product.name}
+                </h1>
+                
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-green-50 border border-green-100 flex items-center gap-1 px-3 py-1 rounded-sm">
+                    <span className="text-sm font-bold text-green-700">{product.rating || "4.8"}</span>
+                    <Star className="w-3.5 h-3.5 text-green-700 fill-current" />
+                  </div>
+                  <span className="text-sm text-gray-500 hover:underline cursor-pointer">150 Ratings</span>
+                </div>
+
+                <div className="flex items-end gap-3 mt-4">
+                  <span className="text-3xl font-bold text-gray-900">₹{product.price.toFixed(2)}</span>
+                  <span className="text-lg text-gray-400 line-through mb-1">₹{(product.price * 1.2).toFixed(2)}</span>
+                  <span className="text-sm text-green-600 font-bold mb-1.5 uppercase tracking-wider">(20% OFF)</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2 font-medium">Inclusive of all taxes</p>
+              </div>
+
+              {/* Size Selector */}
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
+                  <span className="text-xs text-[#D4AF37] font-bold uppercase tracking-wider underline cursor-pointer">Size Guide</span>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
+                    <button 
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2 ${
+                        selectedSize === size 
+                          ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
+                          : 'border-gray-200 text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quantity */}
+              <div className="mb-8 flex items-center gap-4">
+                <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Quantity</span>
+                <div className="flex items-center border-2 border-gray-200 rounded-full overflow-hidden h-11 w-32">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="flex-1 flex justify-center hover:bg-gray-50 text-gray-600">
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="w-10 text-center font-bold text-gray-900">{quantity}</span>
+                  <button onClick={() => setQuantity(quantity + 1)} className="flex-1 flex justify-center hover:bg-gray-50 text-gray-600">
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons (Reduced Size h-11 instead of h-14) */}
+              <div className="fixed bottom-0 left-0 w-full lg:static bg-white lg:bg-transparent p-4 lg:p-0 border-t lg:border-none border-gray-200 z-40 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] lg:shadow-none flex gap-4 mb-8">
+                <button 
+                  onClick={handleWhatsAppBuy}
+                  className="flex-1 bg-[#25D366] text-white h-11 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-[#1ebd5a] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                >
+                  <MessageCircle className="w-4 h-4" /> Buy on WhatsApp
+                </button>
+                
+                <button 
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-gray-900 text-white h-11 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-[#D4AF37] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                >
+                  <ShoppingBag className="w-4 h-4" /> Add to Bag
+                </button>
+              </div>
+
+              {/* Trust Badges */}
+              <div className="grid grid-cols-3 gap-2 mb-10 py-6 border-y border-gray-100">
+                <div className="flex flex-col items-center text-center gap-2">
+                  <ShieldCheck className="w-6 h-6 text-gray-600" />
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">100% Original</span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                  <RefreshCw className="w-6 h-6 text-gray-600" />
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Easy Returns</span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                  <Truck className="w-6 h-6 text-gray-600" />
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Free Shipping</span>
+                </div>
+              </div>
+
+              {/* Accordions (Care Instructions Removed) */}
+              <div className="flex flex-col">
+                <Accordion title="Product Details" id="details">
+                  <p className="mb-3">{product.description || "Premium quality craftsmanship designed for the modern lifestyle. Detailed with precision."}</p>
+                  <ul className="list-disc pl-5 space-y-1 mt-4 border-t border-gray-100 pt-4">
+                    <li>Premium Grade Material</li>
+                    <li>Handcrafted finish</li>
+                    <li>SKU: JIY-884920</li>
+                    <li>Country of Origin: India</li>
+                  </ul>
+                </Accordion>
+                <Accordion title="Shipping & Returns" id="shipping">
+                  Dispatched within 24-48 hours. Standard delivery takes 3-7 business days across India. 
+                  Please note that as per our policy, returns are not accepted unless the product is damaged upon arrival.
+                </Accordion>
+              </div>
+              
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 }
