@@ -21,7 +21,8 @@ async function getProduct(slug: string) {
     price,
     rating,
     description,
-    "imageUrl": image.asset->url
+    "imageUrl": image.asset->url,
+    "galleryUrls": gallery[].asset->url
   }`;
   
   const product = await client.fetch(query, { slug });

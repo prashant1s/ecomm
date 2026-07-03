@@ -47,15 +47,32 @@ export const productType = defineType({
       type: 'number',
       validation: (Rule) => Rule.required().min(1).max(5),
     }),
+    
+    // Primary Image (Used for grids/cards)
     defineField({
       name: 'image',
-      title: 'Product Image',
+      title: 'Primary Product Image',
       type: 'image',
       options: {
         hotspot: true,
       },
-      validation: (Rule) => Rule.required().error('An image is required'),
+      validation: (Rule) => Rule.required().error('A primary image is required'),
     }),
+    
+    // 👇 NEW: Gallery Array for multiple images (Used for product details)
+    defineField({
+      name: 'gallery',
+      title: 'Product Gallery (Additional Images)',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+        }
+      ],
+      description: 'Add extra images here. These will appear as thumbnails on the product page.',
+    }),
+
     defineField({
       name: 'description',
       title: 'Description',

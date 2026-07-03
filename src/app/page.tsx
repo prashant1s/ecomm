@@ -21,6 +21,7 @@ async function getProducts(): Promise<Product[]> {
     price,
     rating,
     "imageUrl": image.asset->url,
+    "galleryUrls": gallery[].asset->url,
     description
   }`;
   return client.fetch(query);

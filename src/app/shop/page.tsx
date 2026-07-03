@@ -13,6 +13,7 @@ export default async function ShopPage() {
     rating,
     category,
     "imageUrl": image.asset->url,
+    "galleryUrls": gallery[].asset->url,
     "originalPrice": price * 1.5,
     "discount": "33% off"
   }`);
