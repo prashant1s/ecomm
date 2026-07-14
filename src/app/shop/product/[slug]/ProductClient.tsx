@@ -129,9 +129,6 @@ export default function ProductClient({ product }: ProductClientProps) {
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-contain p-10 mix-blend-multiply transition-opacity duration-300"
                 />
-                <button className="absolute top-4 right-4 bg-white p-3 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors z-10">
-                  <Heart className="w-5 h-5" />
-                </button>
               </div>
             </div>
 
