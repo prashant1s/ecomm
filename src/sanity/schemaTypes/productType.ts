@@ -27,10 +27,9 @@ export const productType = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Men', value: 'Men' },
-          { title: 'Women', value: 'Women' },
-          { title: 'Kids', value: 'Kids' },
-          { title: 'Accessories', value: 'Accessories' },
+          { title: 'School', value: 'School' },
+          { title: 'Business', value: 'Business' },
+          { title: 'Regular', value: 'Regular' },
         ],
       },
       validation: (Rule) => Rule.required(),
@@ -47,38 +46,28 @@ export const productType = defineType({
       type: 'number',
       validation: (Rule) => Rule.required().min(1).max(5),
     }),
-    
-    // Primary Image (Used for grids/cards)
     defineField({
       name: 'image',
       title: 'Primary Product Image',
       type: 'image',
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
       validation: (Rule) => Rule.required().error('A primary image is required'),
     }),
-    
-    // 👇 NEW: Gallery Array for multiple images (Used for product details)
     defineField({
       name: 'gallery',
       title: 'Product Gallery (Additional Images)',
       type: 'array',
-      of: [
-        {
-          type: 'image',
-          options: { hotspot: true },
-        }
-      ],
+      of: [{ type: 'image', options: { hotspot: true } }],
       description: 'Add extra images here. These will appear as thumbnails on the product page.',
     }),
-
+    // 👇 UPDATED: Now uses Portable Text (rich text) instead of plain text
     defineField({
       name: 'description',
-      title: 'Description',
-      type: 'text',
-      rows: 4,
-      description: 'Brief product info that will also be sent over WhatsApp',
+      title: 'Product Details',
+      type: 'array',
+      of: [{ type: 'block' }],
+      description: 'Add detailed product info here using headings, bold text, and bullets.',
     }),
   ],
 })
+

@@ -44,3 +44,4 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   // 👇 THIS IS THE MAGIC LINE. It loads your new UI with the sidebar!
   return <ProductClient product={product} categories={categories as string[]} />;
 }
+

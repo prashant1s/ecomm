@@ -114,11 +114,11 @@ export default function ShopClient({ initialProducts, categories }: ShopClientPr
           </div>
         </div>
 
-        {/* Gender / Collection Filter */}
+        {/* Gender / Collection Filter*/}
         <div className="border-t border-gray-100 pt-6">
-          <h3 className="font-bold text-gray-800 text-sm mb-4 uppercase tracking-wider">Gender</h3>
+          <h3 className="font-bold text-gray-800 text-sm mb-4 uppercase tracking-wider">Category</h3>
           <div className="space-y-3">
-            {["Men", "Women", "Unisex", "Kids"].map((gender, idx) => (
+            {["School", "Business", "Regular"].map((gender, idx) => (
               <label key={idx} className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"

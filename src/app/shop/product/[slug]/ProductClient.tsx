@@ -9,11 +9,28 @@ import { useCartStore } from "@/store/cartStore";
 import { Product } from "@/types/product";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { PortableText } from "@portabletext/react";
 
 interface ProductClientProps {
   product: Product;
   categories: string[];
 }
+
+// Custom styling for Sanity Rich Text
+const ptComponents = {
+  block: {
+    h3: ({ children }: any) => <h3 className="text-lg font-bold text-gray-900 mt-4 mb-2">{children}</h3>,
+    h4: ({ children }: any) => <h4 className="text-md font-bold text-gray-900 mt-4 mb-2">{children}</h4>,
+    normal: ({ children }: any) => <p className="mb-2 text-gray-600">{children}</p>,
+  },
+  list: {
+    bullet: ({ children }: any) => <ul className="list-disc pl-5 space-y-1 mb-4 text-gray-600">{children}</ul>,
+    number: ({ children }: any) => <ol className="list-decimal pl-5 space-y-1 mb-4 text-gray-600">{children}</ol>,
+  },
+  marks: {
+    strong: ({ children }: any) => <strong className="font-bold text-gray-900">{children}</strong>,
+  },
+};
 
 export default function ProductClient({ product }: ProductClientProps) {
   const addItem = useCartStore((state) => state.addItem);
@@ -128,7 +145,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                   {product.name}
                 </h1>
 
-                {/* Price (Ratings & Discount Removed) */}
+                {/* Price */}
                 <div className="mt-4">
                   <span className="text-3xl font-bold text-gray-900">₹{product.price.toFixed(2)}</span>
                 </div>
@@ -139,10 +156,9 @@ export default function ProductClient({ product }: ProductClientProps) {
               <div className="mb-8">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
-                  <span className="text-xs text-[#D4AF37] font-bold uppercase tracking-wider underline cursor-pointer">Size Guide</span>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
+                  {[ 'S', 'M', 'L'].map((size) => (
                     <button 
                       key={size}
                       onClick={() => setSelectedSize(size)}
@@ -208,14 +224,23 @@ export default function ProductClient({ product }: ProductClientProps) {
               {/* Accordions */}
               <div className="flex flex-col">
                 <Accordion title="Product Details" id="details">
-                  <p className="mb-3">{product.description || "Premium quality craftsmanship designed for the modern lifestyle. Detailed with precision."}</p>
+                  {/* Dynamic Portable Text Rendering */}
+                  {product.description && Array.isArray(product.description) ? (
+                    <PortableText value={product.description} components={ptComponents} />
+                  ) : (
+                    <p className="mb-3">
+                      {typeof product.description === 'string' 
+                        ? product.description 
+                        : "Premium quality craftsmanship designed for the modern lifestyle. Detailed with precision."}
+                    </p>
+                  )}
+                
+                  
                   <ul className="list-disc pl-5 space-y-1 mt-4 border-t border-gray-100 pt-4">
-                    <li>Premium Grade Material</li>
-                    <li>Handcrafted finish</li>
-                    <li>SKU: JIY-{product._id.substring(0, 6)}</li>
-                    <li>Country of Origin: India</li>
+                    <li>Product ID: JR-{product._id.substring(0, 5)}</li>
                   </ul>
                 </Accordion>
+
                 <Accordion title="Shipping & Returns" id="shipping">
                   Dispatched within 24-48 hours. Standard delivery takes 3-7 business days across India. 
                   Please note that as per our policy, returns are not accepted unless the product is damaged upon arrival.

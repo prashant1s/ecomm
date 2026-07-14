@@ -7,5 +7,5 @@ export interface Product {
   rating: number;
   imageUrl: string;
   galleryUrls?: string[];
-  description?: string;
+  description?: any[] | string;
 }
