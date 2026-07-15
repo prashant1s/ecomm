@@ -138,11 +138,11 @@ export default function ShopClient({ initialProducts, categories }: ShopClientPr
             <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">Price Range</h3>
             <span className="text-xs font-bold text-[#D4AF37]">₹0 - ₹{priceRange}</span>
           </div>
-          <input 
+          <input
             type="range" 
             min="0" 
-            max="20000" 
-            step="200"
+            max="10000" 
+            step="500"
             value={priceRange}
             onChange={(e) => setPriceRange(Number(e.target.value))}
             className="w-full accent-[#D4AF37] cursor-pointer"
