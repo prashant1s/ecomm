@@ -15,10 +15,7 @@ export const productType = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      options: {
-        source: 'name',
-        maxLength: 96,
-      },
+      options: { source: 'name', maxLength: 96 },
       validation: (Rule) => Rule.required().error('Slug is required for routes'),
     }),
     defineField({
@@ -46,6 +43,35 @@ export const productType = defineType({
       type: 'number',
       validation: (Rule) => Rule.required().min(1).max(5),
     }),
+    // 👇 NEW: Sizes Selection
+    defineField({
+      name: 'sizes',
+      title: 'Available Sizes',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        list: [
+          { title: 'Small (S)', value: 'S' },
+          { title: 'Medium (M)', value: 'M' },
+          { title: 'Large (L)', value: 'L' },
+        ],
+      },
+      description: 'Select the sizes available for this product. Leave blank if not applicable.',
+    }),
+    // 👇 NEW: Colors Selection
+    defineField({
+      name: 'colors',
+      title: 'Available Colors',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        list: [
+          { title: 'Gold', value: 'Gold' },
+          { title: 'Silver', value: 'Silver' },
+        ],
+      },
+      description: 'Select the Metal type available. Leave blank if not applicable.',
+    }),
     defineField({
       name: 'image',
       title: 'Primary Product Image',
@@ -55,18 +81,15 @@ export const productType = defineType({
     }),
     defineField({
       name: 'gallery',
-      title: 'Product Gallery (Additional Images)',
+      title: 'Product Gallery',
       type: 'array',
       of: [{ type: 'image', options: { hotspot: true } }],
-      description: 'Add extra images here. These will appear as thumbnails on the product page.',
     }),
-    // 👇 UPDATED: Now uses Portable Text (rich text) instead of plain text
     defineField({
       name: 'description',
       title: 'Product Details',
       type: 'array',
       of: [{ type: 'block' }],
-      description: 'Add detailed product info here using headings, bold text, and bullets.',
     }),
   ],
 })

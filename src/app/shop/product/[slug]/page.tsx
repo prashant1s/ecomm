@@ -13,17 +13,19 @@ interface ProductPageProps {
 
 // Fetch the single product using GROQ
 async function getProduct(slug: string) {
-  const query = `*[_type == "product" && (slug.current == $slug || _id == $slug)][0] {
-    _id,
-    name,
-    "slug": slug.current,
-    category,
-    price,
-    rating,
-    description,
-    "imageUrl": image.asset->url,
-    "galleryUrls": gallery[].asset->url
-  }`;
+// Add sizes and colors to your query:
+const query = `*[_type == "product" && slug.current == $slug][0] {
+  _id,
+  name,
+  category,
+  price,
+  rating,
+  sizes,
+  colors,
+  description,
+  "imageUrl": image.asset->url,
+  "galleryUrls": gallery[].asset->url
+}`;
   
   const product = await client.fetch(query, { slug });
   return product;
