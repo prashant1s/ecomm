@@ -1,3 +1,8 @@
+export interface SizeOption {
+  sizeName: string;
+  imageUrl?: string;
+}
+
 export interface Product {
   _id: string;
   name: string;
@@ -8,6 +13,6 @@ export interface Product {
   imageUrl: string;
   galleryUrls?: string[];
   description?: any[] | string;
-  sizes?: string[];
   colors?: string[];
+  sizes?: SizeOption[];
 }

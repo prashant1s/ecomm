@@ -20,11 +20,15 @@ const query = `*[_type == "product" && slug.current == $slug][0] {
   category,
   price,
   rating,
-  sizes,
+  
   colors,
   description,
   "imageUrl": image.asset->url,
-  "galleryUrls": gallery[].asset->url
+  "galleryUrls": gallery[].asset->url,
+  "sizes": sizes[]{
+    sizeName,
+    "imageUrl": sizeImage.asset->url
+  }
 }`;
   
   const product = await client.fetch(query, { slug });

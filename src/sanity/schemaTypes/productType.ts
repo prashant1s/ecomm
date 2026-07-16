@@ -43,20 +43,46 @@ export const productType = defineType({
       type: 'number',
       validation: (Rule) => Rule.required().min(1).max(5),
     }),
-    // 👇 NEW: Sizes Selection
+    
+    
     defineField({
       name: 'sizes',
-      title: 'Available Sizes',
+      title: 'Available Sizes & Images',
       type: 'array',
-      of: [{ type: 'string' }],
-      options: {
-        list: [
-          { title: 'Small (S)', value: 'S' },
-          { title: 'Medium (M)', value: 'M' },
-          { title: 'Large (L)', value: 'L' },
-        ],
-      },
-      description: 'Select the sizes available for this product. Leave blank if not applicable.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'sizeName',
+              title: 'Size',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Small (S)', value: 'S' },
+                  { title: 'Medium (M)', value: 'M' },
+                  { title: 'Large (L)', value: 'L' },
+                ],
+              },
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'sizeImage',
+              title: 'Image for this Size',
+              type: 'image',
+              options: { hotspot: true },
+              description: 'Optional: Upload a specific image for this size.',
+            },
+          ],
+          preview: {
+            select: {
+              title: 'sizeName',
+              media: 'sizeImage',
+            },
+          },
+        },
+      ],
+      description: 'Add sizes and optionally attach specific images to them.',
     }),
     // 👇 NEW: Colors Selection
     defineField({
@@ -68,10 +94,12 @@ export const productType = defineType({
         list: [
           { title: 'Gold', value: 'Gold' },
           { title: 'Silver', value: 'Silver' },
+           { title: 'copper', value: 'copper' },
         ],
       },
       description: 'Select the Metal type available. Leave blank if not applicable.',
     }),
+
     defineField({
       name: 'image',
       title: 'Primary Product Image',

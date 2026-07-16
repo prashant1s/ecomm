@@ -252,7 +252,6 @@
 //   );
 // }
 
-
 "use client";
 
 import { useState } from "react";
@@ -288,26 +287,58 @@ const ptComponents = {
 
 export default function ProductClient({ product }: ProductClientProps) {
   const addItem = useCartStore((state) => state.addItem);
-  const [quantity, setQuantity] = useState(1);
   
-  // Dynamically set default selections based on Sanity data
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "");
+  // 1. STATE VARIABLES
+  const [selectedSize, setSelectedSize] = useState((product.sizes as any[])?.[0]?.sizeName || "");
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
-  
   const [activeTab, setActiveTab] = useState("details");
-  const thumbnails = [product.imageUrl, ...(product.galleryUrls || [])];
-  const [mainImage, setMainImage] = useState(product.imageUrl);
+  const [quantity, setQuantity] = useState(1);
+
+  // 2. THUMBNAIL LOGIC
+  // Extract images attached to sizes, combine with main/gallery images, and remove duplicates
+  const sizeImages = (product.sizes as any[] || [])
+    .map((sizeObj) => sizeObj.imageUrl)
+    .filter(Boolean); 
+
+  const allThumbnails = [
+    product.imageUrl, 
+    ...(product.galleryUrls || []), 
+    ...sizeImages
+  ];
+  
+  // Array.from(new Set()) removes any duplicate image URLs
+  const thumbnails = Array.from(new Set(allThumbnails));
+
+  // Default main image, but will be overwritten if a size has an image
+  const [mainImage, setMainImage] = useState((product.sizes as any[])?.[0]?.imageUrl || product.imageUrl);
+
+  // 3. EVENT HANDLERS
+  // When a user clicks a size button
+  const handleSizeSelect = (sizeObj: any) => {
+    setSelectedSize(sizeObj.sizeName);
+    if (sizeObj.imageUrl) {
+      setMainImage(sizeObj.imageUrl);
+    }
+  };
+
+  // When a user clicks a thumbnail image
+  const handleThumbnailClick = (imgUrl: string) => {
+    setMainImage(imgUrl);
+    // Check if this image belongs to a specific size, and auto-select it!
+    const matchedSize = (product.sizes as any[])?.find((s) => s.imageUrl === imgUrl);
+    if (matchedSize) {
+      setSelectedSize(matchedSize.sizeName);
+    }
+  };
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
-      // You may want to update your cart store to accept selectedSize and selectedColor
       addItem({ ...product, selectedSize, selectedColor } as any); 
     }
   };
 
   const WHATSAPP_NUMBER = "918168291041";
   const handleWhatsAppBuy = () => {
-    // Dynamically build the WhatsApp message based on what options exist
     const sizeText = selectedSize ? `Size: ${selectedSize}, ` : "";
     const colorText = selectedColor ? `Color: ${selectedColor}, ` : "";
     const message = `Hi, I want to buy ${product.name} (${sizeText}${colorText}Qty: ${quantity}). Is it available?`;
@@ -367,7 +398,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                   {thumbnails.map((img, idx) => (
                     <button 
                       key={idx} 
-                      onClick={() => setMainImage(img)}
+                      onClick={() => handleThumbnailClick(img)} // Now uses the smart click handler
                       className={`relative w-16 h-20 md:w-full md:h-24 flex-shrink-0 bg-[#f8f8f8] rounded-lg overflow-hidden border-2 transition-all ${
                         mainImage === img ? 'border-[#D4AF37] opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
@@ -411,31 +442,31 @@ export default function ProductClient({ product }: ProductClientProps) {
                 <p className="text-xs text-gray-500 mt-2 font-medium">Inclusive of all taxes</p>
               </div>
 
-              {/* Dynamic Size Selector (Only renders if sizes exist) */}
+              {/* Dynamic Size Selector */}
               {product.sizes && product.sizes.length > 0 && (
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    {product.sizes.map((size) => (
+                    {product.sizes.map((sizeObj: any) => (
                       <button 
-                        key={size}
-                        onClick={() => setSelectedSize(size)}
+                        key={sizeObj.sizeName}
+                        onClick={() => handleSizeSelect(sizeObj)}
                         className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2 ${
-                          selectedSize === size 
+                          selectedSize === sizeObj.sizeName 
                             ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
                             : 'border-gray-200 text-gray-700 hover:border-gray-400'
                         }`}
                       >
-                        {size}
+                        {sizeObj.sizeName}
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Dynamic Color Selector (Only renders if colors exist) */}
+              {/* Dynamic Metal Type / Color Selector */}
               {product.colors && product.colors.length > 0 && (
                 <div className="mb-8">
                   <div className="flex justify-between items-center mb-4">
