@@ -442,7 +442,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                 <p className="text-xs text-gray-500 mt-2 font-medium">Inclusive of all taxes</p>
               </div>
 
-              {/* Dynamic Size Selector */}
+              {/* Dynamic Size Selector
               {product.sizes && product.sizes.length > 0 && (
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-4">
@@ -460,6 +460,43 @@ export default function ProductClient({ product }: ProductClientProps) {
                         }`}
                       >
                         {sizeObj.sizeName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )} */}
+
+             {/* Dynamic Size Selector */}
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {product.sizes.map((sizeObj: any) => (
+                      <button 
+                        key={sizeObj.sizeName}
+                        onClick={() => handleSizeSelect(sizeObj)}
+                        // 👇 UPDATED CSS: Removed 'flex-col', added 'gap-2', and changed to a pill shape (px-5 py-2.5 rounded-full)
+                        className={`px-5 py-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all border-2 ${
+                          selectedSize === sizeObj.sizeName 
+                            ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
+                            : 'border-gray-200 text-gray-700 hover:border-gray-400'
+                        }`}
+                      >
+                        {/* The Label (e.g., S, M, Small) */}
+                        <span className="text-md font-bold">
+                          {sizeObj.sizeName}
+                        </span>
+                        
+                        {/* The Dimension (e.g., 11 inch) - Now inline! */}
+                        {sizeObj.dimension && (
+                          <span className={`text-md font-medium whitespace-nowrap ${
+                            selectedSize === sizeObj.sizeName ? 'text-[#D4AF37]' : 'text-gray-500'
+                          }`}>
+                            | {sizeObj.dimension}
+                          </span>
+                        )}
                       </button>
                     ))}
                   </div>

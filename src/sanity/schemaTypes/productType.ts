@@ -45,6 +45,47 @@ export const productType = defineType({
     }),
     
     
+    // defineField({
+    //   name: 'sizes',
+    //   title: 'Available Sizes & Images',
+    //   type: 'array',
+    //   of: [
+    //     {
+    //       type: 'object',
+    //       fields: [
+    //         {
+    //           name: 'sizeName',
+    //           title: 'Size',
+    //           type: 'string',
+    //           options: {
+    //             list: [
+    //               { title: 'Small (S)', value: 'S' },
+    //               { title: 'Medium (M)', value: 'M' },
+    //               { title: 'Large (L)', value: 'L' },
+    //             ],
+    //           },
+    //           validation: (Rule) => Rule.required(),
+    //         },
+    //         {
+    //           name: 'sizeImage',
+    //           title: 'Image for this Size',
+    //           type: 'image',
+    //           options: { hotspot: true },
+    //           description: 'Optional: Upload a specific image for this size.',
+    //         },
+    //       ],
+    //       preview: {
+    //         select: {
+    //           title: 'sizeName',
+    //           media: 'sizeImage',
+    //         },
+    //       },
+    //     },
+    //   ],
+    //   description: 'Add sizes and optionally attach specific images to them.',
+    // }),
+
+    // Replace your current 'sizes' array field with this updated version:
     defineField({
       name: 'sizes',
       title: 'Available Sizes & Images',
@@ -55,35 +96,36 @@ export const productType = defineType({
           fields: [
             {
               name: 'sizeName',
-              title: 'Size',
+              title: 'Size Label',
               type: 'string',
-              options: {
-                list: [
-                  { title: 'Small (S)', value: 'S' },
-                  { title: 'Medium (M)', value: 'M' },
-                  { title: 'Large (L)', value: 'L' },
-                ],
-              },
+              description: 'The standard label (e.g., S, M, L, Small, Big)',
               validation: (Rule) => Rule.required(),
+            },
+            {
+              // 👇 NEW: The exact physical dimension
+              name: 'dimension',
+              title: 'Exact Dimension',
+              type: 'string',
+              description: 'Optional: The physical measurement (e.g., 11 inch, 11.5", 500g)',
             },
             {
               name: 'sizeImage',
               title: 'Image for this Size',
               type: 'image',
               options: { hotspot: true },
-              description: 'Optional: Upload a specific image for this size.',
             },
           ],
           preview: {
             select: {
               title: 'sizeName',
+              subtitle: 'dimension', // Shows the dimension in the Sanity studio list!
               media: 'sizeImage',
             },
           },
         },
       ],
-      description: 'Add sizes and optionally attach specific images to them.',
     }),
+
     // 👇 NEW: Colors Selection
     defineField({
       name: 'colors',

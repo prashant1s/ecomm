@@ -27,6 +27,7 @@ const query = `*[_type == "product" && slug.current == $slug][0] {
   "galleryUrls": gallery[].asset->url,
   "sizes": sizes[]{
     sizeName,
+    dimension,
     "imageUrl": sizeImage.asset->url
   }
 }`;

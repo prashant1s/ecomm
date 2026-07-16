@@ -1,6 +1,7 @@
 export interface SizeOption {
   sizeName: string;
   imageUrl?: string;
+  dimension?: string; // 👇 Added this
 }
 
 export interface Product {
