@@ -549,9 +549,9 @@ export default function ProductClient({ product }: ProductClientProps) {
                         : "Premium quality craftsmanship designed for the modern lifestyle. Detailed with precision."}
                     </p>
                   )}
-                  <ul className="list-disc pl-5 space-y-1 mt-4 border-t border-gray-100 pt-4">
-                    <li>Product ID: JR-{product._id.substring(0, 5)}</li>
-                  </ul>
+                 <ul className="list-disc pl-5 space-y-1 mt-4 border-t border-gray-100 pt-4">
+                     <li>SKU ID: {product.sku || `JR-${product._id.substring(0, 5)}`}</li>
+                      </ul>
                 </Accordion>
 
                 <Accordion title="Shipping & Returns" id="shipping">

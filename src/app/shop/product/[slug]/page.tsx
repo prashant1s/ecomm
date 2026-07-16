@@ -20,7 +20,7 @@ const query = `*[_type == "product" && slug.current == $slug][0] {
   category,
   price,
   rating,
-  
+  sku,
   colors,
   description,
   "imageUrl": image.asset->url,

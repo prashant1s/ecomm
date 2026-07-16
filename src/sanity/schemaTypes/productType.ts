@@ -100,6 +100,15 @@ export const productType = defineType({
       description: 'Select the Metal type available. Leave blank if not applicable.',
     }),
 
+
+    // Add this field inside your product.ts fields array:
+    defineField({
+      name: 'sku',
+      title: 'SKU / Product ID',
+      type: 'string',
+      description: 'Enter a custom SKU for this product (e.g., JIY-1024).',
+    }),
+    
     defineField({
       name: 'image',
       title: 'Primary Product Image',

@@ -15,4 +15,5 @@ export interface Product {
   description?: any[] | string;
   colors?: string[];
   sizes?: SizeOption[];
+  sku?: string;   
 }
