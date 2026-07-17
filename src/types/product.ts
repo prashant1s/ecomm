@@ -1,7 +1,11 @@
 export interface SizeOption {
   sizeName: string;
   imageUrl?: string;
-  dimension?: string; // 👇 Added this
+  dimension?: string;
+}
+export interface ColorOption {
+  colorName: string;
+  imageUrl?: string;
 }
 
 export interface Product {
@@ -14,7 +18,7 @@ export interface Product {
   imageUrl: string;
   galleryUrls?: string[];
   description?: any[] | string;
-  colors?: string[];
   sizes?: SizeOption[];
   sku?: string;   
+  colors?: ColorOption[];
 }

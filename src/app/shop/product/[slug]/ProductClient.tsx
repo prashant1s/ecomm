@@ -1,3 +1,5 @@
+
+
 // "use client";
 
 // import { useState } from "react";
@@ -16,7 +18,6 @@
 //   categories: string[];
 // }
 
-// // Custom styling for Sanity Rich Text
 // const ptComponents = {
 //   block: {
 //     h3: ({ children }: any) => <h3 className="text-lg font-bold text-gray-900 mt-4 mb-2">{children}</h3>,
@@ -34,23 +35,62 @@
 
 // export default function ProductClient({ product }: ProductClientProps) {
 //   const addItem = useCartStore((state) => state.addItem);
-//   const [quantity, setQuantity] = useState(1);
-//   const [selectedSize, setSelectedSize] = useState("M");
-//   const [activeTab, setActiveTab] = useState("details");
-
-//   const thumbnails = [product.imageUrl, ...(product.galleryUrls || [])];
   
-//   const [mainImage, setMainImage] = useState(product.imageUrl);
+//   // 1. STATE VARIABLES
+//   const [selectedSize, setSelectedSize] = useState((product.sizes as any[])?.[0]?.sizeName || "");
+//   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
+//   const [activeTab, setActiveTab] = useState("details");
+//   const [quantity, setQuantity] = useState(1);
+
+//   // 2. THUMBNAIL LOGIC
+//   // Extract images attached to sizes, combine with main/gallery images, and remove duplicates
+//   const sizeImages = (product.sizes as any[] || [])
+//     .map((sizeObj) => sizeObj.imageUrl)
+//     .filter(Boolean); 
+
+//   const allThumbnails = [
+//     product.imageUrl, 
+//     ...(product.galleryUrls || []), 
+//     ...sizeImages
+//   ];
+  
+//   // Array.from(new Set()) removes any duplicate image URLs
+//   const thumbnails = Array.from(new Set(allThumbnails));
+
+//   // Default main image, but will be overwritten if a size has an image
+//   const [mainImage, setMainImage] = useState((product.sizes as any[])?.[0]?.imageUrl || product.imageUrl);
+
+//   // 3. EVENT HANDLERS
+//   // When a user clicks a size button
+//   const handleSizeSelect = (sizeObj: any) => {
+//     setSelectedSize(sizeObj.sizeName);
+//     if (sizeObj.imageUrl) {
+//       setMainImage(sizeObj.imageUrl);
+//     }
+//   };
+
+//   // When a user clicks a thumbnail image
+//   const handleThumbnailClick = (imgUrl: string) => {
+//     setMainImage(imgUrl);
+//     // Check if this image belongs to a specific size, and auto-select it!
+//     const matchedSize = (product.sizes as any[])?.find((s) => s.imageUrl === imgUrl);
+//     if (matchedSize) {
+//       setSelectedSize(matchedSize.sizeName);
+//     }
+//   };
 
 //   const handleAddToCart = () => {
 //     for (let i = 0; i < quantity; i++) {
-//       addItem(product);
+//       addItem({ ...product, selectedSize, selectedColor } as any); 
 //     }
 //   };
 
 //   const WHATSAPP_NUMBER = "918168291041";
 //   const handleWhatsAppBuy = () => {
-//     const message = `Hi, I want to buy ${product.name} (Size: ${selectedSize}, Qty: ${quantity}). Is it available?`;
+//     const sizeText = selectedSize ? `Size: ${selectedSize}, ` : "";
+//     const colorText = selectedColor ? `Color: ${selectedColor}, ` : "";
+//     const message = `Hi, I want to buy ${product.name} (${sizeText}${colorText}Qty: ${quantity}). Is it available?`;
+    
 //     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
 //   };
 
@@ -101,14 +141,12 @@
             
 //             {/* Left: Image Gallery */}
 //             <div className="w-full lg:w-[45%] max-w-lg mx-auto flex flex-col-reverse md:flex-row gap-4 md:gap-6 h-fit sticky top-32">
-              
-//               {/* Vertical Thumbnails */}
 //               {thumbnails.length > 1 && (
 //                 <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:w-20 custom-scrollbar pb-2 md:pb-0">
 //                   {thumbnails.map((img, idx) => (
 //                     <button 
 //                       key={idx} 
-//                       onClick={() => setMainImage(img)}
+//                       onClick={() => handleThumbnailClick(img)} // Now uses the smart click handler
 //                       className={`relative w-16 h-20 md:w-full md:h-24 flex-shrink-0 bg-[#f8f8f8] rounded-lg overflow-hidden border-2 transition-all ${
 //                         mainImage === img ? 'border-[#D4AF37] opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
 //                       }`}
@@ -129,6 +167,9 @@
 //                   sizes="(max-width: 768px) 100vw, 50vw"
 //                   className="object-contain p-10 mix-blend-multiply transition-opacity duration-300"
 //                 />
+//                 <button className="absolute top-4 right-4 bg-white p-3 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors z-10">
+//                   <Heart className="w-5 h-5" />
+//                 </button>
 //               </div>
 //             </div>
 
@@ -149,27 +190,66 @@
 //                 <p className="text-xs text-gray-500 mt-2 font-medium">Inclusive of all taxes</p>
 //               </div>
 
-//               {/* Size Selector */}
-//               <div className="mb-8">
-//                 <div className="flex justify-between items-center mb-4">
-//                   <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
+//              {/* Dynamic Size Selector */}
+//               {product.sizes && product.sizes.length > 0 && (
+//                 <div className="mb-6">
+//                   <div className="flex justify-between items-center mb-4">
+//                     <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
+//                   </div>
+//                   <div className="flex flex-wrap gap-3">
+//                     {product.sizes.map((sizeObj: any) => (
+//                       <button 
+//                         key={sizeObj.sizeName}
+//                         onClick={() => handleSizeSelect(sizeObj)}
+//                         // 👇 UPDATED CSS: Removed 'flex-col', added 'gap-2', and changed to a pill shape (px-5 py-2.5 rounded-full)
+//                         className={`px-5 py-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all border-2 ${
+//                           selectedSize === sizeObj.sizeName 
+//                             ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
+//                             : 'border-gray-200 text-gray-700 hover:border-gray-400'
+//                         }`}
+//                       >
+//                         {/* The Label (e.g., S, M, Small) */}
+//                         <span className="text-md font-bold">
+//                           {sizeObj.sizeName}
+//                         </span>
+                        
+//                         {/* The Dimension (e.g., 11 inch) - Now inline! */}
+//                         {sizeObj.dimension && (
+//                           <span className={`text-md font-medium whitespace-nowrap ${
+//                             selectedSize === sizeObj.sizeName ? 'text-[#D4AF37]' : 'text-gray-500'
+//                           }`}>
+//                             | {sizeObj.dimension}
+//                           </span>
+//                         )}
+//                       </button>
+//                     ))}
+//                   </div>
 //                 </div>
-//                 <div className="flex flex-wrap gap-3">
-//                   {[ 'S', 'M', 'L'].map((size) => (
-//                     <button 
-//                       key={size}
-//                       onClick={() => setSelectedSize(size)}
-//                       className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2 ${
-//                         selectedSize === size 
-//                           ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
-//                           : 'border-gray-200 text-gray-700 hover:border-gray-400'
-//                       }`}
-//                     >
-//                       {size}
-//                     </button>
-//                   ))}
+//               )}
+
+//               {/* Dynamic Metal Type / Color Selector */}
+//               {product.colors && product.colors.length > 0 && (
+//                 <div className="mb-8">
+//                   <div className="flex justify-between items-center mb-4">
+//                     <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Metal Type</span>
+//                   </div>
+//                   <div className="flex flex-wrap gap-3">
+//                     {product.colors.map((color) => (
+//                       <button 
+//                         key={color}
+//                         onClick={() => setSelectedColor(color)}
+//                         className={`px-5 py-2.5 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2 ${
+//                           selectedColor === color 
+//                             ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
+//                             : 'border-gray-200 text-gray-700 hover:border-gray-400'
+//                         }`}
+//                       >
+//                         {color}
+//                       </button>
+//                     ))}
+//                   </div>
 //                 </div>
-//               </div>
+//               )}
 
 //               {/* Quantity */}
 //               <div className="mb-8 flex items-center gap-4">
@@ -221,7 +301,6 @@
 //               {/* Accordions */}
 //               <div className="flex flex-col">
 //                 <Accordion title="Product Details" id="details">
-//                   {/* Dynamic Portable Text Rendering */}
 //                   {product.description && Array.isArray(product.description) ? (
 //                     <PortableText value={product.description} components={ptComponents} />
 //                   ) : (
@@ -231,11 +310,9 @@
 //                         : "Premium quality craftsmanship designed for the modern lifestyle. Detailed with precision."}
 //                     </p>
 //                   )}
-                
-                  
-//                   <ul className="list-disc pl-5 space-y-1 mt-4 border-t border-gray-100 pt-4">
-//                     <li>Product ID: JR-{product._id.substring(0, 5)}</li>
-//                   </ul>
+//                  <ul className="list-disc pl-5 space-y-1 mt-4 border-t border-gray-100 pt-4">
+//                      <li>SKU ID: {product.sku || `JR-${product._id.substring(0, 5)}`}</li>
+//                       </ul>
 //                 </Accordion>
 
 //                 <Accordion title="Shipping & Returns" id="shipping">
@@ -251,6 +328,7 @@
 //     </>
 //   );
 // }
+
 
 "use client";
 
@@ -290,45 +368,50 @@ export default function ProductClient({ product }: ProductClientProps) {
   
   // 1. STATE VARIABLES
   const [selectedSize, setSelectedSize] = useState((product.sizes as any[])?.[0]?.sizeName || "");
-  const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
+  const [selectedColor, setSelectedColor] = useState((product.colors as any[])?.[0]?.colorName || "");
   const [activeTab, setActiveTab] = useState("details");
   const [quantity, setQuantity] = useState(1);
 
   // 2. THUMBNAIL LOGIC
-  // Extract images attached to sizes, combine with main/gallery images, and remove duplicates
   const sizeImages = (product.sizes as any[] || [])
     .map((sizeObj) => sizeObj.imageUrl)
     .filter(Boolean); 
 
+  const colorImages = (product.colors as any[] || [])
+    .map((colorObj) => colorObj.imageUrl)
+    .filter(Boolean);
+
   const allThumbnails = [
     product.imageUrl, 
     ...(product.galleryUrls || []), 
-    ...sizeImages
-  ];
+    ...sizeImages,
+    ...colorImages // Inject color images into the grid
+  ].filter(Boolean);
   
-  // Array.from(new Set()) removes any duplicate image URLs
   const thumbnails = Array.from(new Set(allThumbnails));
-
-  // Default main image, but will be overwritten if a size has an image
-  const [mainImage, setMainImage] = useState((product.sizes as any[])?.[0]?.imageUrl || product.imageUrl);
+  const [mainImage, setMainImage] = useState((product.sizes as any[])?.[0]?.imageUrl || (product.colors as any[])?.[0]?.imageUrl || product.imageUrl);
 
   // 3. EVENT HANDLERS
-  // When a user clicks a size button
   const handleSizeSelect = (sizeObj: any) => {
     setSelectedSize(sizeObj.sizeName);
-    if (sizeObj.imageUrl) {
-      setMainImage(sizeObj.imageUrl);
-    }
+    if (sizeObj.imageUrl) setMainImage(sizeObj.imageUrl);
   };
 
-  // When a user clicks a thumbnail image
+  const handleColorSelect = (colorObj: any) => {
+    setSelectedColor(colorObj.colorName);
+    if (colorObj.imageUrl) setMainImage(colorObj.imageUrl);
+  };
+
   const handleThumbnailClick = (imgUrl: string) => {
     setMainImage(imgUrl);
-    // Check if this image belongs to a specific size, and auto-select it!
+    
+    // Auto-select size if thumbnail matches
     const matchedSize = (product.sizes as any[])?.find((s) => s.imageUrl === imgUrl);
-    if (matchedSize) {
-      setSelectedSize(matchedSize.sizeName);
-    }
+    if (matchedSize) setSelectedSize(matchedSize.sizeName);
+
+    // Auto-select color if thumbnail matches
+    const matchedColor = (product.colors as any[])?.find((c) => c.imageUrl === imgUrl);
+    if (matchedColor) setSelectedColor(matchedColor.colorName);
   };
 
   const handleAddToCart = () => {
@@ -340,7 +423,7 @@ export default function ProductClient({ product }: ProductClientProps) {
   const WHATSAPP_NUMBER = "918168291041";
   const handleWhatsAppBuy = () => {
     const sizeText = selectedSize ? `Size: ${selectedSize}, ` : "";
-    const colorText = selectedColor ? `Color: ${selectedColor}, ` : "";
+    const colorText = selectedColor ? `Metal: ${selectedColor}, ` : "";
     const message = `Hi, I want to buy ${product.name} (${sizeText}${colorText}Qty: ${quantity}). Is it available?`;
     
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
@@ -398,7 +481,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                   {thumbnails.map((img, idx) => (
                     <button 
                       key={idx} 
-                      onClick={() => handleThumbnailClick(img)} // Now uses the smart click handler
+                      onClick={() => handleThumbnailClick(img)}
                       className={`relative w-16 h-20 md:w-full md:h-24 flex-shrink-0 bg-[#f8f8f8] rounded-lg overflow-hidden border-2 transition-all ${
                         mainImage === img ? 'border-[#D4AF37] opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
@@ -419,9 +502,6 @@ export default function ProductClient({ product }: ProductClientProps) {
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-contain p-10 mix-blend-multiply transition-opacity duration-300"
                 />
-                <button className="absolute top-4 right-4 bg-white p-3 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors z-10">
-                  <Heart className="w-5 h-5" />
-                </button>
               </div>
             </div>
 
@@ -442,7 +522,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                 <p className="text-xs text-gray-500 mt-2 font-medium">Inclusive of all taxes</p>
               </div>
 
-              {/* Dynamic Size Selector
+              {/* Dynamic Size Selector */}
               {product.sizes && product.sizes.length > 0 && (
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-4">
@@ -453,45 +533,17 @@ export default function ProductClient({ product }: ProductClientProps) {
                       <button 
                         key={sizeObj.sizeName}
                         onClick={() => handleSizeSelect(sizeObj)}
-                        className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2 ${
-                          selectedSize === sizeObj.sizeName 
-                            ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
-                            : 'border-gray-200 text-gray-700 hover:border-gray-400'
-                        }`}
-                      >
-                        {sizeObj.sizeName}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )} */}
-
-             {/* Dynamic Size Selector */}
-              {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Size</span>
-                  </div>
-                  <div className="flex flex-wrap gap-3">
-                    {product.sizes.map((sizeObj: any) => (
-                      <button 
-                        key={sizeObj.sizeName}
-                        onClick={() => handleSizeSelect(sizeObj)}
-                        // 👇 UPDATED CSS: Removed 'flex-col', added 'gap-2', and changed to a pill shape (px-5 py-2.5 rounded-full)
                         className={`px-5 py-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all border-2 ${
                           selectedSize === sizeObj.sizeName 
                             ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
                             : 'border-gray-200 text-gray-700 hover:border-gray-400'
                         }`}
                       >
-                        {/* The Label (e.g., S, M, Small) */}
-                        <span className="text-md font-bold">
+                        <span className="text-sm font-bold">
                           {sizeObj.sizeName}
                         </span>
-                        
-                        {/* The Dimension (e.g., 11 inch) - Now inline! */}
                         {sizeObj.dimension && (
-                          <span className={`text-md font-medium whitespace-nowrap ${
+                          <span className={`text-xs font-medium whitespace-nowrap ${
                             selectedSize === sizeObj.sizeName ? 'text-[#D4AF37]' : 'text-gray-500'
                           }`}>
                             | {sizeObj.dimension}
@@ -503,24 +555,24 @@ export default function ProductClient({ product }: ProductClientProps) {
                 </div>
               )}
 
-              {/* Dynamic Metal Type / Color Selector */}
+              {/* Dynamic Metal Type Selector */}
               {product.colors && product.colors.length > 0 && (
                 <div className="mb-8">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Metal Type</span>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    {product.colors.map((color) => (
+                    {product.colors.map((colorObj: any) => (
                       <button 
-                        key={color}
-                        onClick={() => setSelectedColor(color)}
+                        key={colorObj.colorName}
+                        onClick={() => handleColorSelect(colorObj)}
                         className={`px-5 py-2.5 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2 ${
-                          selectedColor === color 
+                          selectedColor === colorObj.colorName 
                             ? 'border-[#D4AF37] bg-yellow-50 text-[#D4AF37]' 
                             : 'border-gray-200 text-gray-700 hover:border-gray-400'
                         }`}
                       >
-                        {color}
+                        {colorObj.colorName}
                       </button>
                     ))}
                   </div>
@@ -586,9 +638,9 @@ export default function ProductClient({ product }: ProductClientProps) {
                         : "Premium quality craftsmanship designed for the modern lifestyle. Detailed with precision."}
                     </p>
                   )}
-                 <ul className="list-disc pl-5 space-y-1 mt-4 border-t border-gray-100 pt-4">
-                     <li>SKU ID: {product.sku || `JR-${product._id.substring(0, 5)}`}</li>
-                      </ul>
+                  <ul className="list-disc pl-5 space-y-1 mt-4 border-t border-gray-100 pt-4">
+                    <li>Product ID: {product.sku || `JR-${product._id.substring(0, 5)}`}</li>
+                  </ul>
                 </Accordion>
 
                 <Accordion title="Shipping & Returns" id="shipping">
@@ -604,4 +656,3 @@ export default function ProductClient({ product }: ProductClientProps) {
     </>
   );
 }
-

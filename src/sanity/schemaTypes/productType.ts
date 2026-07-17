@@ -43,49 +43,6 @@ export const productType = defineType({
       type: 'number',
       validation: (Rule) => Rule.required().min(1).max(5),
     }),
-    
-    
-    // defineField({
-    //   name: 'sizes',
-    //   title: 'Available Sizes & Images',
-    //   type: 'array',
-    //   of: [
-    //     {
-    //       type: 'object',
-    //       fields: [
-    //         {
-    //           name: 'sizeName',
-    //           title: 'Size',
-    //           type: 'string',
-    //           options: {
-    //             list: [
-    //               { title: 'Small (S)', value: 'S' },
-    //               { title: 'Medium (M)', value: 'M' },
-    //               { title: 'Large (L)', value: 'L' },
-    //             ],
-    //           },
-    //           validation: (Rule) => Rule.required(),
-    //         },
-    //         {
-    //           name: 'sizeImage',
-    //           title: 'Image for this Size',
-    //           type: 'image',
-    //           options: { hotspot: true },
-    //           description: 'Optional: Upload a specific image for this size.',
-    //         },
-    //       ],
-    //       preview: {
-    //         select: {
-    //           title: 'sizeName',
-    //           media: 'sizeImage',
-    //         },
-    //       },
-    //     },
-    //   ],
-    //   description: 'Add sizes and optionally attach specific images to them.',
-    // }),
-
-    // Replace your current 'sizes' array field with this updated version:
     defineField({
       name: 'sizes',
       title: 'Available Sizes & Images',
@@ -118,7 +75,7 @@ export const productType = defineType({
           preview: {
             select: {
               title: 'sizeName',
-              subtitle: 'dimension', // Shows the dimension in the Sanity studio list!
+              subtitle: 'dimension',
               media: 'sizeImage',
             },
           },
@@ -126,43 +83,53 @@ export const productType = defineType({
       ],
     }),
 
-    // 👇 NEW: Colors Selection
+// Replace your current 'colors' field with this:
     defineField({
       name: 'colors',
-      title: 'Available Colors',
+      title: 'Available Metal Types & Images',
       type: 'array',
-      of: [{ type: 'string' }],
-      options: {
-        list: [
-          { title: 'Gold', value: 'Gold' },
-          { title: 'Silver', value: 'Silver' },
-           { title: 'copper', value: 'copper' },
-        ],
-      },
-      description: 'Select the Metal type available. Leave blank if not applicable.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'colorName',
+              title: 'Metal Type',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Gold', value: 'Gold' },
+                  { title: 'Silver', value: 'Silver' },
+                  { title: 'Copper', value: 'Copper' }, // Capitalized Copper for consistency
+                ],
+              },
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'colorImage',
+              title: 'Image for this Metal Type',
+              type: 'image',
+              options: { hotspot: true },
+              description: 'Optional: Upload a specific image to show this metal color.',
+            },
+          ],
+          preview: {
+            select: {
+              title: 'colorName',
+              media: 'colorImage',
+            },
+          },
+        },
+      ],
+      description: 'Select the Metal types available and optionally attach images.',
     }),
-
-
+    
     // Add this field inside your product.ts fields array:
     defineField({
       name: 'sku',
       title: 'SKU / Product ID',
       type: 'string',
       description: 'Enter a custom SKU for this product (e.g., JIY-1024).',
-    }),
-    
-    defineField({
-      name: 'image',
-      title: 'Primary Product Image',
-      type: 'image',
-      options: { hotspot: true },
-      validation: (Rule) => Rule.required().error('A primary image is required'),
-    }),
-    defineField({
-      name: 'gallery',
-      title: 'Product Gallery',
-      type: 'array',
-      of: [{ type: 'image', options: { hotspot: true } }],
     }),
     defineField({
       name: 'description',

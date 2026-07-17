@@ -48,13 +48,20 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
                 
                 {/* Image Container */}
                 <div className="relative aspect-square w-full mb-3 flex items-center justify-center">
-                  <Image 
-                    src={typeof product.imageUrl === 'string' ? product.imageUrl : urlForImage(product.imageUrl).url()} 
-                    alt={product.name} 
-                    fill 
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="object-contain hover:scale-105 transition-transform duration-500"
-                  />
+                 <Image 
+  // 👇 Safely checks if imageUrl exists before trying to resolve it
+  src={
+    product.imageUrl 
+      ? (typeof product.imageUrl === 'string' 
+          ? product.imageUrl 
+          : urlForImage(product.imageUrl).url())
+      : '/placeholder.png' // 👈 Create a simple grey image in your public folder named placeholder.png
+  } 
+  alt={product.name || "Product"} 
+  fill 
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+  className="object-contain p-4"
+/>
                 </div>
 
                 {/* Text Content */}
