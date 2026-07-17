@@ -22,7 +22,16 @@ async function getProducts(): Promise<Product[]> {
     rating,
     "imageUrl": image.asset->url,
     "galleryUrls": gallery[].asset->url,
-    description
+    description,
+     "colors": colors[]{
+    colorName,
+    "imageUrl": colorImage.asset->url
+  },
+    "sizes": sizes[]{
+    sizeName,
+    dimension,
+    "imageUrl": sizeImage.asset->url
+  }
   }`;
   return client.fetch(query);
 }

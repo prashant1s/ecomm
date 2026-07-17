@@ -6,6 +6,7 @@ export interface SizeOption {
 export interface ColorOption {
   colorName: string;
   imageUrl?: string;
+  dimension?: string;
 }
 
 export interface Product {
@@ -21,4 +22,5 @@ export interface Product {
   sizes?: SizeOption[];
   sku?: string;   
   colors?: ColorOption[];
+  
 }

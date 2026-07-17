@@ -27,6 +27,8 @@ export const productType = defineType({
           { title: 'School', value: 'School' },
           { title: 'Business', value: 'Business' },
           { title: 'Regular', value: 'Regular' },
+          { title: 'Gift Item', value: 'Gift Item' },
+          { title: 'Sports Award', value: 'Sports Award' },
         ],
       },
       validation: (Rule) => Rule.required(),
@@ -104,6 +106,12 @@ export const productType = defineType({
                 ],
               },
               validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'dimension',
+              title: 'Metal Size / Dimension',
+              type: 'string',
+              description: 'Optional: Specify the size or weight for this metal (e.g., 500g, 12 inch).',
             },
             {
               name: 'colorImage',

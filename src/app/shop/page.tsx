@@ -4,16 +4,29 @@ import { Product } from "@/types/product";
 
 export const revalidate = 60; 
 
+
+
 export default async function ShopPage() {
   const products = await client.fetch<Product[]>(`*[_type == "product"] {
-    _id,
-    name,
-    "slug": slug.current, 
-    price,
-    rating,
-    category,
-    "imageUrl": image.asset->url,
-    "galleryUrls": gallery[].asset->url,
+_id,
+  name,
+  "slug": slug.current,
+  category,
+  price,
+  rating,
+  sku,
+  "colors": colors[]{
+    colorName,
+    "imageUrl": colorImage.asset->url
+  },
+  description,
+  "imageUrl": image.asset->url,
+  "galleryUrls": gallery[].asset->url,
+  "sizes": sizes[]{
+    sizeName,
+    dimension,
+    "imageUrl": sizeImage.asset->url
+  },
     "originalPrice": price * 1.5,
     "discount": "33% off"
   }`);

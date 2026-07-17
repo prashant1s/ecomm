@@ -3,28 +3,28 @@ import { client } from "@/sanity/lib/client";
 import ProductClient from "./ProductClient";
 
 export const dynamic = "force-dynamic";
-
-// This interface types the URL parameters provided by Next.js
 interface ProductPageProps {
   params: Promise<{
     slug: string;
   }>;
 }
 
-// Fetch the single product using GROQ
 async function getProduct(slug: string) {
   // Add sizes and colors to your query:
   const query = `*[_type == "product" && slug.current == $slug][0] {
   _id,
   name,
+  "slug": slug.current,
   category,
   price,
   rating,
   sku,
   "colors": colors[]{
     colorName,
+    dimension,
     "imageUrl": colorImage.asset->url
-  },  description,
+  },
+  description,
   "imageUrl": image.asset->url,
   "galleryUrls": gallery[].asset->url,
   "sizes": sizes[]{
