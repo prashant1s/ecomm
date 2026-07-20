@@ -23,33 +23,26 @@ interface ShopClientProps {
   categories: string[];
 }
 
-// 👇 SMART IMAGE HELPER: Hunts for the first available image anywhere on the product
+// 👇 SMART IMAGE HELPER
 const getDisplayImage = (product: Product) => {
-  // 1. Check Primary Image
   if (product.imageUrl) {
     return typeof product.imageUrl === "string"
       ? product.imageUrl
       : urlForImage(product.imageUrl).url();
   }
-
-  // 2. Check Gallery Images
   if (product.galleryUrls && product.galleryUrls.length > 0) {
     return product.galleryUrls[0];
   }
-
-  // 3. Check Available Sizes & Images
   const sizeImages = (product.sizes as any[] || [])
     .map((s) => s.imageUrl)
     .filter(Boolean);
   if (sizeImages.length > 0) return sizeImages[0];
 
-  // 4. Check Available Metal Types & Images
   const colorImages = (product.colors as any[] || [])
     .map((c) => c.imageUrl)
     .filter(Boolean);
   if (colorImages.length > 0) return colorImages[0];
 
-  // 5. Ultimate Fallback
   return "/placeholder.png";
 };
 
@@ -59,16 +52,16 @@ export default function ShopClient({
 }: ShopClientProps) {
   const [searchCategory, setSearchCategory] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [priceRange, setPriceRange] = useState<number>(100000);
+  
+  // 👇 FIX: Set initial price range to 10000 instead of 100000
+  const [priceRange, setPriceRange] = useState<number>(10000);
 
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [sortOption, setSortOption] = useState("Relevance");
 
   const addItem = useCartStore((state) => state.addItem);
 
-  // Expanded Filter Logic
   let filteredProducts = initialProducts.filter((p) => {
     // 1. Category Filter
     if (
@@ -77,19 +70,12 @@ export default function ShopClient({
     )
       return false;
 
-    // 2. Gender Filter
-    // if (selectedGenders.length > 0 && p.gender && !selectedGenders.includes(p.gender)) return false;
-
-    // 3. Price Filter
+    // 2. Price Filter
     if (p.price > priceRange) return false;
-
-    // 4. Availability Filter
-    // if (inStockOnly && p.stock === 0) return false;
 
     return true;
   });
 
-  // Sort Logic
   if (sortOption === "Price (Low to High)") {
     filteredProducts.sort((a, b) => a.price - b.price);
   } else if (sortOption === "Price (High to Low)") {
@@ -101,14 +87,6 @@ export default function ShopClient({
       prev.includes(category)
         ? prev.filter((c) => c !== category)
         : [...prev, category],
-    );
-  };
-
-  const handleGenderToggle = (gender: string) => {
-    setSelectedGenders((prev) =>
-      prev.includes(gender)
-        ? prev.filter((g) => g !== gender)
-        : [...prev, gender],
     );
   };
 
@@ -147,10 +125,12 @@ export default function ShopClient({
               placeholder="Search categories..."
               value={searchCategory}
               onChange={(e) => setSearchCategory(e.target.value)}
-              className="w-full border border-gray-200 rounded bg-gray-50 pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-[#D4AF37] transition-colors"
+              // 👇 FIX: Added text-gray-600 and placeholder:text-gray-400 so the text is visible and gray
+              className="w-full border border-gray-200 rounded bg-gray-50 pl-9 pr-3 py-2 text-sm text-gray-600 placeholder:text-gray-400 focus:outline-none focus:border-[#D4AF37] transition-colors"
             />
           </div>
-          <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+          
+          <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">
             {categories
               .filter((c) =>
                 c.toLowerCase().includes(searchCategory.toLowerCase()),
@@ -171,38 +151,17 @@ export default function ShopClient({
                   </span>
                 </label>
               ))}
-          </div>
-        </div>
-
-        {/* Gender / Collection Filter*/}
-        <div className="border-t border-gray-100 pt-2">
-          <h3 className="font-bold text-gray-800 text-sm mb-4 uppercase tracking-wider">
-            Category
-          </h3>
-          <div className="space-y-3">
-            {["School", "Business", "Regular", "Gift Item", "Sports Award"].map(
-              (gender, idx) => (
-                <label
-                  key={idx}
-                  className="flex items-center gap-3 cursor-pointer group"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedGenders.includes(gender)}
-                    onChange={() => handleGenderToggle(gender)}
-                    className="w-4 h-4 rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37] cursor-pointer"
-                  />
-                  <span className="text-gray-600 text-sm group-hover:text-gray-900 transition-colors">
-                    {gender}
-                  </span>
-                </label>
-              ),
+              
+            {/* Show message if search yields no results */}
+            {categories.filter((c) => c.toLowerCase().includes(searchCategory.toLowerCase())).length === 0 && (
+              <p className="text-sm text-gray-400 italic">No categories found.</p>
             )}
           </div>
         </div>
+        {/* 👇 FIX: Deleted the duplicate hardcoded Category block that was right here */}
 
         {/* Price Slider */}
-        <div className="border-t border-gray-100 pt-2">
+        <div className="border-t border-gray-100 pt-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">
               Price Range
@@ -277,13 +236,12 @@ export default function ShopClient({
             {/* Desktop Sticky Sidebar */}
             <aside className="hidden lg:block w-[280px] flex-shrink-0">
               <div className="bg-white border border-gray-100 rounded-xl shadow-sm sticky top-32 overflow-hidden max-h-[calc(100vh-140px)]">
-                <SidebarContent />
+               {SidebarContent()}
               </div>
             </aside>
 
             {/* Product Grid Area */}
             <main className="flex-1">
-              {/* Desktop Sort Bar */}
               <div className="hidden lg:flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
                 <h1 className="text-xl font-bold text-gray-900 font-serif">
                   Premium Collections
@@ -303,7 +261,7 @@ export default function ShopClient({
                 </div>
               </div>
 
-              {/* Grid with New Card Design */}
+              {/* Grid with Premium Card Design */}
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                 {filteredProducts.length === 0 ? (
                   <div className="col-span-full bg-white p-12 text-center rounded-xl shadow-sm border border-gray-100">
@@ -318,41 +276,51 @@ export default function ShopClient({
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow duration-300 flex flex-col h-full relative"
+                      className="bg-[#F0F0F0] rounded-xl border border-gray-200 hover:shadow-xl hover:border-gray-300 transition-all duration-300 flex flex-col h-full relative group p-3"
                     >
                       <Link
                         href={`/shop/product/${product.slug || product._id}`}
                         className="flex-col flex flex-1"
                       >
                         {/* Image Container */}
-                        <div className="relative aspect-square w-full mb-3 flex items-center justify-center">
+                        <div className="relative aspect-square w-full flex items-center justify-center mb-3">
                           <Image
-                            // 👇 Updated to use our new smart function
                             src={getDisplayImage(product)}
                             alt={product.name || "Product"}
                             fill
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                            className="object-contain hover:scale-105 transition-transform duration-500"
+                            className="object-contain group-hover:scale-110 transition-transform duration-700 ease-in-out mix-blend-multiply"
                           />
                         </div>
 
                         {/* Text Content */}
                         <div className="flex flex-col flex-1">
-                          <span className="text-[13px] text-gray-500 mb-0">
+                          {/* Category in Gold */}
+                          <span className="text-[10px] md:text-[11px] font-bold text-[#D4AF37] uppercase tracking-wider mb-0.5 truncate">
                             {product.category}
                           </span>
-                          <h3 className="font-semibold text-gray-900 text-base mb-0 line-clamp-2 min-h-[30px]">
+                          
+                          <h3 className="font-bold text-gray-900 text-sm mb-0 line-clamp-2 min-h-[36px] leading-tight transition-colors">
                             {product.name}
                           </h3>
 
-                          {/* Bottom Area (Pushed to bottom using mt-auto) */}
-                          <div className="mt-auto flex flex-col gap-2 pt-3">
+                          {/* Bottom Area */}
+                          <div className="mt-auto flex flex-col gap-2 pt-1.5">
                             {/* Row 1: Price & Cart Button */}
-                            <div className="flex items-center justify-between mb-2">
-                              {/* Price */}
-                              <span className="font-bold text-gray-900 text-[16px]">
-                                ₹{product.price.toFixed(2)}
-                              </span>
+                            <div className="flex items-end justify-between">
+                              <div className="flex flex-col gap-0.5">
+                                {/* Rating Stars */}
+                                <div className="flex text-[#F5A623] text-[10px] md:text-[11px]">
+                                  {"★".repeat(Math.round(product.rating || 5))}
+                                  <span className="text-gray-300">
+                                    {"★".repeat(5 - Math.round(product.rating || 5))}
+                                  </span>
+                                </div>
+                                {/* Price */}
+                                <span className="font-extrabold text-gray-900 text-[15px] md:text-[16px]">
+                                  ₹{product.price.toFixed(2)}
+                                </span>
+                              </div>
 
                               {/* Dark Green Cart Button */}
                               <button
@@ -361,24 +329,24 @@ export default function ShopClient({
                                   e.stopPropagation();
                                   addItem(product);
                                 }}
-                                className="w-10 h-10 rounded-full bg-[#1f3d2f] text-white flex items-center justify-center hover:bg-[#152920] transition-colors shadow-sm z-10 relative"
+                                className="w-8 h-8 rounded-full bg-[#1f3d2f] text-white flex items-center justify-center hover:bg-[#152920] hover:scale-105 transition-all shadow-sm z-10 relative"
                                 title="Add to Cart"
                               >
                                 <ShoppingBag
-                                  className="w-5 h-5"
+                                  className="w-4 h-4"
                                   strokeWidth={2}
                                 />
                               </button>
                             </div>
 
-                            {/* Row 2: Full Width WhatsApp Button */}
+                            {/* Full Width WhatsApp Button */}
                             <button
                               onClick={(e) => handleWhatsAppBuy(e, product)}
-                              className="w-full bg-[#25D366] text-white text-[13px] font-bold py-2.5 rounded-md flex items-center justify-center gap-2 hover:bg-[#1ebd5a] transition duration-200 shadow-sm z-10 relative tracking-wide uppercase"
+                              className="w-full bg-[#25D366] text-white text-[11px] md:text-[12px] font-bold py-2 rounded-md flex items-center justify-center gap-1.5 hover:bg-[#1ebd5a] transition duration-200 shadow-sm z-10 relative tracking-wide uppercase"
                             >
                               <MessageCircle
-                                className="w-[18px] h-[18px] fill-current"
-                                strokeWidth={1}
+                                className="w-4 h-4 fill-current"
+                                strokeWidth={2}
                               />
                               Buy on WhatsApp
                             </button>
@@ -423,15 +391,15 @@ export default function ShopClient({
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                  <SidebarContent />
+                 {SidebarContent()}
                 </div>
                 <div className="p-4 border-t border-gray-100 grid grid-cols-2 gap-3 bg-white">
                   <button
                     onClick={() => {
                       setSelectedCategories([]);
-                      setSelectedGenders([]);
-                      setPriceRange(100000);
+                      setPriceRange(10000); // 👇 Also clear back to 10k here
                       setInStockOnly(false);
+                      setSearchCategory(""); // 👇 Clears the search text too
                     }}
                     className="py-3 border border-gray-300 rounded-lg text-sm font-bold text-gray-700 uppercase tracking-wider"
                   >
@@ -453,4 +421,3 @@ export default function ShopClient({
     </>
   );
 }
-
