@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"; 
+import { useState, useEffect, useRef } from "react"; 
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation"; 
@@ -9,12 +9,13 @@ import {
   ShoppingCart, 
   Search, 
   Menu, 
-  X, 
+  X,
+  Package 
 } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { motion, AnimatePresence } from "framer-motion";
 
-// 👇 SMART IMAGE HELPER: Hunts for the first available image anywhere on the cart item
+// 👇 SMART IMAGE HELPER
 const getDisplayImage = (item: any) => {
   if (item.imageUrl) {
     return typeof item.imageUrl === "string"
@@ -32,13 +33,26 @@ const getDisplayImage = (item: any) => {
   return "/placeholder.png"; 
 };
 
+// STATIC SUGGESTIONS FOR SEARCH BAR
+const SUGGESTIONS = [
+  "Corporate Gifts",
+  "School Awards",
+  "Sports Trophies",
+  "Anniversary Gifts",
+  "Farewell Mementos"
+];
+
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  
+  // Search States
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   
   const { items, subtotal, removeItem } = useCartStore();
   const [mounted, setMounted] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
   
   const pathname = usePathname(); 
   const router = useRouter();
@@ -55,6 +69,15 @@ export default function Header() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // Close search dropdown when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -67,18 +90,31 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      setIsSearchFocused(false);
       router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setIsSearchFocused(false);
+    router.push(`/shop?q=${encodeURIComponent(suggestion)}`);
+  };
+
+  // Filter suggestions based on input
+  const filteredSuggestions = SUGGESTIONS.filter(s => 
+    s.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
       <header className="fixed top-0 w-full z-50 bg-white border-b border-gray-200 shadow-sm py-3">
-        {/* 👇 FIX: Changed px-4 to px-6 md:px-12 xl:px-20 to push the ends inward */}
-        <div className="container mx-auto px-6 md:px-12 xl:px-20 flex justify-between items-center">
+        {/* 👇 FIX: Added relative positioning to the container */}
+        <div className="container mx-auto px-6 md:px-12 xl:px-20 flex justify-between items-center relative">
           
           {/* Left: Menu (Mobile) & Logo */}
-          <div className="flex items-center gap-4 flex-1">
+          {/* 👇 FIX: Removed flex-1 so it only takes up necessary space */}
+          <div className="flex items-center gap-4">
             <Menu 
               className="w-6 h-6 lg:hidden cursor-pointer text-gray-800 hover:text-[#D4AF37] transition-colors" 
               onClick={() => setIsMobileMenuOpen(true)}
@@ -96,7 +132,8 @@ export default function Header() {
           </div>
 
           {/* Center: Navigation Links */}
-          <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-8">
+          {/* 👇 FIX: Added absolute positioning to force true center alignment */}
+<nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 absolute left-[45%] top-1/2 -translate-x-1/2 -translate-y-1/2">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -111,15 +148,17 @@ export default function Header() {
           </nav>
 
           {/* Right: Search & Icons */}
-          <div className="flex items-center justify-end gap-4 xl:gap-5 flex-1">
+          {/* 👇 FIX: Removed flex-1 so it only takes up necessary space */}
+          <div className="flex items-center justify-end gap-5 xl:gap-6">
             
-            {/* Search Bar (Desktop) */}
-            <div className="hidden md:block w-full max-w-[260px]">
+            {/* Search Bar with Suggestions (Desktop) */}
+            <div className="hidden md:block w-full max-w-[260px] relative" ref={searchRef}>
               <form onSubmit={handleSearch} className="relative w-full">
                 <input
                   type="text"
                   placeholder="Search for Gifts..."
                   value={searchQuery}
+                  onFocus={() => setIsSearchFocused(true)}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full border border-gray-300 rounded-full py-2 pl-5 pr-10 text-sm text-gray-800 focus:outline-none focus:border-[#D4AF37] transition-colors"
                 />
@@ -127,12 +166,57 @@ export default function Header() {
                   <Search className="w-4 h-4" />
                 </button>
               </form>
+
+              {/* SEARCH SUGGESTIONS DROPDOWN */}
+              <AnimatePresence>
+                {isSearchFocused && searchQuery.trim().length > 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 shadow-xl rounded-xl overflow-hidden z-50"
+                  >
+                    {filteredSuggestions.length > 0 ? (
+                      <ul className="py-2">
+                        {filteredSuggestions.map((suggestion, idx) => (
+                          <li key={idx}>
+                            <button
+                              onClick={() => handleSuggestionClick(suggestion)}
+                              className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors flex items-center gap-2"
+                            >
+                              <Search className="w-3.5 h-3.5 text-gray-400" />
+                              {suggestion}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                        No suggestions found
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+
+            {/* Bulk Order Icon Button */}
+            <Link
+              href="/bulk-order"
+              title="Bulk Order Enquiry"
+              className="relative cursor-pointer group flex items-center flex-shrink-0"
+            >
+              <Package 
+                className="w-6 h-6 text-gray-800 group-hover:text-[#D4AF37] transition-colors" 
+                strokeWidth={1.75}
+              />
+            </Link>
 
             {/* Cart Icon */}
             <div
               className="relative cursor-pointer group flex items-center flex-shrink-0"
               onClick={() => setIsCartOpen(true)}
+              title="Shopping Cart"
             >
               <ShoppingCart 
                 className="w-6 h-6 text-gray-800 group-hover:text-[#D4AF37] transition-colors" 
@@ -145,7 +229,6 @@ export default function Header() {
               )}
             </div>
           </div>
-
         </div>
       </header>
 
@@ -238,3 +321,4 @@ export default function Header() {
     </>
   );
 }
+
