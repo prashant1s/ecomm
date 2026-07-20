@@ -10,7 +10,7 @@ import { client } from '@/sanity/lib/client';
 import { Product } from '@/types/product';
 import WhyChooseBanner from "@/components/home/WhyChooseBanner"; 
 import PartnerInstitutions from "@/components/home/PartnerInstitutions";
-
+import SmartGiftFinder from "@/components/home/SmartGiftFinder"; // 👈 Import it
 
 async function getProducts(): Promise<Product[]> {
   const query = `*[_type == "product"] | order(_createdAt desc)[0...5] {
@@ -49,6 +49,7 @@ export default async function Home() {
       <Brands />
       <PromoBanner />
       <Features />
+      <SmartGiftFinder />
       <WhyChooseBanner />
       <Footer />
     </main>
