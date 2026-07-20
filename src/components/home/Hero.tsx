@@ -22,7 +22,7 @@ export default function Hero() {
         <div className="flex gap-4">
           <Link href="/shop">
             <button className="border border-white text-white px-5 py-2 font-semibold tracking-wide hover:bg-white/10 transition-all duration-300">
-              SHOP MORE
+              SHOP NOW
             </button>
           </Link>
         </div>

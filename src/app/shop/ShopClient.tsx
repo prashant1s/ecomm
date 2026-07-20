@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation"; // 1. Add this import
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -50,8 +51,13 @@ export default function ShopClient({
   initialProducts,
   categories,
 }: ShopClientProps) {
+  const searchParams = useSearchParams();
+const urlCategory = searchParams.get("category");
+const [selectedCategories, setSelectedCategories] = useState<string[]>(
+  urlCategory ? [urlCategory] : []
+);
   const [searchCategory, setSearchCategory] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [inStockOnly, setInStockOnly] = useState(false);
   
   // 👇 FIX: Set initial price range to 10000 instead of 100000
